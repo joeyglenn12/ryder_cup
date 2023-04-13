@@ -28,6 +28,6 @@ As of April 12, 2023:
 | Kurt Kitayama | 1040 | 
 | Sam Burns | 984 | 
 | Keegan Bradley| 1153 | 
-| Patrick Cantlay | 821 | 
+| Collin Morikawa | 860 | 
 
 .....
