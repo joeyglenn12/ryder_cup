@@ -27,7 +27,8 @@ As of April 12, 2023:
 | Max Homa | 1801 | 
 | Keegan Bradley| 1153 | 
 | Kurt Kitayama | 1040 | 
+| Chris Kirk | 1024 | 
 | Sam Burns | 984 | 
-| Collin Morikawa | 860 | 
+
 
 .....
