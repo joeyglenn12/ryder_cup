@@ -22,7 +22,7 @@ The other six golfers are picked by the Ryder Cup captain.
 As of April 12, 2023:
 
 | Name | Points | 
-| --------------- | --------------- | --------------- |
+| --------------- | --------------- |
 | Scottie Scheffler | 1844 | 
 | Max Homa | 1801 | 
 | Kurt Kitayama | 1040 | 
