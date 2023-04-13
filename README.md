@@ -25,9 +25,9 @@ As of April 12, 2023:
 | --------------- | --------------- |
 | Scottie Scheffler | 1844 | 
 | Max Homa | 1801 | 
+| Keegan Bradley| 1153 | 
 | Kurt Kitayama | 1040 | 
 | Sam Burns | 984 | 
-| Keegan Bradley| 1153 | 
 | Collin Morikawa | 860 | 
 
 .....
