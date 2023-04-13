@@ -1,5 +1,5 @@
 ```python
-#Web Scraping
+#Web Scraping ESPN Public Data
 import pandas
 ```
 
@@ -10,11 +10,6 @@ import requests
 pd.set_option('display.max_columns', None) #so we can see all columns in a wide dataframe
 import time
 import numpy as np
-```
-
-
-```python
-
 ```
 
 
@@ -39,16 +34,6 @@ all_dicts = [r_2021, r_2022, r_2023]
 
 
 ```python
-#check the first athlete's values
-x = r_2023['athletes'][0]['categories'][0]['totals'][0:15]
-print(x)
-```
-
-    ['$11,631,495', '1770', '10', '36', '10', '7', '2', '68.1', '308.7', '63.3', '73.8', '1.715', '0', '36.0', '4.694']
-
-
-
-```python
 #adding the value headers manually
 table_headers = ['Earnings','Cup','Evnts','Rnds','Cuts','Top10','Wins','Score','DDIS','DACC','GIR','PUTTS','SAND','BIRDS']
 print(table_headers)
@@ -59,21 +44,21 @@ print(table_headers)
 
 
 ```python
-#let's pull the stats for 2023
+#pull stats for 2023
 values_2023 =[]
 for athlete in r_2023['athletes']:
        for category in athlete['categories']:
            x = category['totals'][0:14]
            values_2023.append(x)
 
-#now we'll put it into a dataframe
+#turn into dataframe
 df_values_2023 = pd.DataFrame(values_2023, columns=table_headers)
 
 ```
 
 
 ```python
-#player info is in a different section, we'll have to index new data
+#player info is in a different section
 info_categories = r_2023['athletes'][0]['athlete'].keys()
 info_2023 = []
 
@@ -86,7 +71,7 @@ for athlete in r_2023['athletes']:
             row.append(None)
     info_2023.append(row)
 
-#we'll turn this to a data frame too
+#create a player info df
 info_df_2023 = pd.DataFrame(info_2023, columns=info_categories)
 
 ```
@@ -99,7 +84,7 @@ df_2023 = pd.concat([info_df_2023,df_values_2023], axis=1)
 
 
 ```python
-#repeat this process for seasons 2021 and 2022
+#repeat for seasons 2021 and 2022
 values_2022 =[]
 for athlete in r_2022['athletes']:
        for category in athlete['categories']:
@@ -138,7 +123,7 @@ for athlete in r_2021['athletes']:
 
 df_values_2021 = pd.DataFrame(values_2021, columns=table_headers)
 
-#2022 athletes
+#2021 athletes
 info_categories_2021 = r_2021['athletes'][0]['athlete'].keys()
 info_2021 = []
 
@@ -167,7 +152,7 @@ golf_df_concat = pd.concat([df_2021, df_2022, df_2023])
 
 
 ```python
-#pesky format on earnings, we'll have to remove commas and $ signs
+#reformat on earnings, we'll have to remove commas and $ signs
 golf_df_concat['Earnings'] = golf_df_concat['Earnings'].str.replace(',', '').str.replace('$', '')
 ```
 
@@ -182,7 +167,7 @@ golf_df_concat['Earnings'] = golf_df_concat['Earnings'].str.replace(',', '').str
 
 
 ```python
-#make them numbers not strings
+#reformat categories from strings to numbers
 golf_df_concat[['Earnings', 'Cup', 'Evnts', 'Rnds', 'Cuts', 'Top10', 'Wins']] = golf_df_concat[['Earnings', 'Cup', 'Evnts', 'Rnds', 'Cuts', 'Top10', 'Wins']].apply(pd.to_numeric)
 golf_df_concat['Score'] = pd.to_numeric(golf_df_concat['Score'], errors='coerce')
 golf_df_concat['DDIS'] = pd.to_numeric(golf_df_concat['DDIS'], errors='coerce')
@@ -204,173 +189,13 @@ golf_df_agg = golf_df_concat.groupby('displayName').agg({'Earnings':'sum','Cup':
 
 
 ```python
-
-```
-
-
-```python
-
-```
-
-
-```python
-golf_df_agg.head()
-```
-
-
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Earnings</th>
-      <th>Cup</th>
-      <th>Evnts</th>
-      <th>Rnds</th>
-      <th>Cuts</th>
-      <th>Top10</th>
-      <th>Wins</th>
-      <th>Score</th>
-      <th>DDIS</th>
-      <th>DACC</th>
-      <th>GIR</th>
-      <th>PUTTS</th>
-      <th>SAND</th>
-      <th>BIRDS</th>
-    </tr>
-    <tr>
-      <th>displayName</th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>Aaron Wise</th>
-      <td>3454521</td>
-      <td>-12</td>
-      <td>24</td>
-      <td>86</td>
-      <td>19</td>
-      <td>4</td>
-      <td>0</td>
-      <td>69.40</td>
-      <td>308.30</td>
-      <td>59.2</td>
-      <td>69.10</td>
-      <td>1.748</td>
-      <td>0.0</td>
-      <td>43.00</td>
-    </tr>
-    <tr>
-      <th>Abraham Ancer</th>
-      <td>5816565</td>
-      <td>-10</td>
-      <td>27</td>
-      <td>98</td>
-      <td>24</td>
-      <td>9</td>
-      <td>1</td>
-      <td>69.50</td>
-      <td>290.40</td>
-      <td>71.1</td>
-      <td>69.30</td>
-      <td>1.732</td>
-      <td>0.0</td>
-      <td>50.80</td>
-    </tr>
-    <tr>
-      <th>Adam Hadwin</th>
-      <td>4373841</td>
-      <td>1182</td>
-      <td>39</td>
-      <td>134</td>
-      <td>31</td>
-      <td>8</td>
-      <td>0</td>
-      <td>69.95</td>
-      <td>295.45</td>
-      <td>63.8</td>
-      <td>67.75</td>
-      <td>1.746</td>
-      <td>0.0</td>
-      <td>55.35</td>
-    </tr>
-    <tr>
-      <th>Adam Schenk</th>
-      <td>1803965</td>
-      <td>584</td>
-      <td>17</td>
-      <td>59</td>
-      <td>12</td>
-      <td>1</td>
-      <td>0</td>
-      <td>70.30</td>
-      <td>304.40</td>
-      <td>53.7</td>
-      <td>66.10</td>
-      <td>1.806</td>
-      <td>0.0</td>
-      <td>49.00</td>
-    </tr>
-    <tr>
-      <th>Adam Scott</th>
-      <td>2913198</td>
-      <td>-4</td>
-      <td>20</td>
-      <td>72</td>
-      <td>18</td>
-      <td>5</td>
-      <td>0</td>
-      <td>70.10</td>
-      <td>312.40</td>
-      <td>55.3</td>
-      <td>67.70</td>
-      <td>1.742</td>
-      <td>0.0</td>
-      <td>52.70</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
-
-
-```python
+#Quick Save
 golf_df_agg.to_excel('golf_player_data.xlsx', index=True)
 ```
 
 
 ```python
-#Great! We've saved it, let's check the data
+#Data check
 golf_df_agg.head()
 ```
 
@@ -484,18 +309,18 @@ golf_df_agg.head()
       <th>Adam Schenk</th>
       <td>1803965</td>
       <td>584</td>
-      <td>17</td>
-      <td>59</td>
+      <td>18</td>
+      <td>61</td>
       <td>12</td>
       <td>1</td>
       <td>0</td>
-      <td>70.30</td>
-      <td>304.40</td>
-      <td>53.7</td>
-      <td>66.10</td>
-      <td>1.806</td>
+      <td>70.40</td>
+      <td>304.50</td>
+      <td>53.5</td>
+      <td>66.00</td>
+      <td>1.808</td>
       <td>0.0</td>
-      <td>49.00</td>
+      <td>50.90</td>
     </tr>
     <tr>
       <th>Adam Scott</th>
@@ -582,20 +407,20 @@ golf_df_agg.tail()
   <tbody>
     <tr>
       <th>Viktor Hovland</th>
-      <td>13376692</td>
-      <td>616</td>
-      <td>55</td>
-      <td>189</td>
-      <td>49</td>
-      <td>16</td>
+      <td>13957192</td>
+      <td>713</td>
+      <td>56</td>
+      <td>193</td>
+      <td>50</td>
+      <td>17</td>
       <td>2</td>
-      <td>69.533333</td>
-      <td>305.333333</td>
-      <td>63.133333</td>
-      <td>67.766667</td>
-      <td>1.732667</td>
+      <td>69.566667</td>
+      <td>305.133333</td>
+      <td>63.933333</td>
+      <td>67.566667</td>
+      <td>1.735000</td>
       <td>0.0</td>
-      <td>51.466667</td>
+      <td>51.10</td>
     </tr>
     <tr>
       <th>Webb Simpson</th>
@@ -612,7 +437,7 @@ golf_df_agg.tail()
       <td>69.400000</td>
       <td>1.734000</td>
       <td>0.0</td>
-      <td>61.700000</td>
+      <td>61.70</td>
     </tr>
     <tr>
       <th>Will Zalatoris</th>
@@ -629,7 +454,7 @@ golf_df_agg.tail()
       <td>70.200000</td>
       <td>1.755500</td>
       <td>0.0</td>
-      <td>48.550000</td>
+      <td>48.55</td>
     </tr>
     <tr>
       <th>Wyndham Clark</th>
@@ -646,24 +471,24 @@ golf_df_agg.tail()
       <td>67.900000</td>
       <td>1.734000</td>
       <td>0.0</td>
-      <td>52.800000</td>
+      <td>52.80</td>
     </tr>
     <tr>
       <th>Xander Schauffele</th>
-      <td>15176924</td>
-      <td>510</td>
-      <td>52</td>
-      <td>177</td>
-      <td>46</td>
-      <td>19</td>
+      <td>15608924</td>
+      <td>585</td>
+      <td>53</td>
+      <td>181</td>
+      <td>47</td>
+      <td>20</td>
       <td>3</td>
-      <td>69.333333</td>
-      <td>305.366667</td>
-      <td>58.433333</td>
-      <td>69.033333</td>
-      <td>1.722667</td>
+      <td>69.400000</td>
+      <td>305.300000</td>
+      <td>59.433333</td>
+      <td>69.200000</td>
+      <td>1.726667</td>
       <td>0.0</td>
-      <td>62.233333</td>
+      <td>61.10</td>
     </tr>
   </tbody>
 </table>
@@ -717,139 +542,139 @@ golf_df_agg.describe()
   <tbody>
     <tr>
       <th>count</th>
-      <td>9.400000e+01</td>
-      <td>94.000000</td>
-      <td>94.000000</td>
-      <td>94.000000</td>
-      <td>94.000000</td>
-      <td>94.000000</td>
-      <td>94.000000</td>
-      <td>94.000000</td>
-      <td>94.000000</td>
-      <td>94.000000</td>
-      <td>94.000000</td>
-      <td>94.000000</td>
-      <td>94.0</td>
-      <td>94.000000</td>
+      <td>9.200000e+01</td>
+      <td>92.000000</td>
+      <td>92.000000</td>
+      <td>92.000000</td>
+      <td>92.000000</td>
+      <td>92.000000</td>
+      <td>92.000000</td>
+      <td>92.000000</td>
+      <td>92.000000</td>
+      <td>92.000000</td>
+      <td>92.000000</td>
+      <td>92.000000</td>
+      <td>92.0</td>
+      <td>92.000000</td>
     </tr>
     <tr>
       <th>mean</th>
-      <td>6.487320e+06</td>
-      <td>961.202128</td>
-      <td>32.606383</td>
-      <td>108.244681</td>
-      <td>25.095745</td>
-      <td>7.851064</td>
-      <td>1.106383</td>
-      <td>69.500532</td>
-      <td>299.934752</td>
-      <td>60.095213</td>
-      <td>66.925532</td>
-      <td>1.733780</td>
+      <td>6.776147e+06</td>
+      <td>1015.673913</td>
+      <td>33.836957</td>
+      <td>112.554348</td>
+      <td>26.097826</td>
+      <td>8.152174</td>
+      <td>1.152174</td>
+      <td>69.535326</td>
+      <td>300.308514</td>
+      <td>60.072283</td>
+      <td>66.812138</td>
+      <td>1.734138</td>
       <td>0.0</td>
-      <td>53.157624</td>
+      <td>52.900362</td>
     </tr>
     <tr>
       <th>std</th>
-      <td>5.464426e+06</td>
-      <td>809.484378</td>
-      <td>16.847972</td>
-      <td>57.614717</td>
-      <td>14.139147</td>
-      <td>6.058776</td>
-      <td>1.425332</td>
-      <td>3.678197</td>
-      <td>18.006235</td>
-      <td>5.070876</td>
-      <td>3.961661</td>
-      <td>0.093496</td>
+      <td>5.671968e+06</td>
+      <td>825.992618</td>
+      <td>17.431358</td>
+      <td>59.594853</td>
+      <td>14.576106</td>
+      <td>6.182099</td>
+      <td>1.459601</td>
+      <td>3.709235</td>
+      <td>17.933058</td>
+      <td>4.986574</td>
+      <td>3.976978</td>
+      <td>0.094267</td>
       <td>0.0</td>
-      <td>6.838573</td>
+      <td>6.790910</td>
     </tr>
     <tr>
       <th>min</th>
-      <td>1.596177e+06</td>
+      <td>1.730193e+06</td>
       <td>-18.000000</td>
-      <td>10.000000</td>
-      <td>32.000000</td>
+      <td>11.000000</td>
+      <td>34.000000</td>
       <td>7.000000</td>
       <td>1.000000</td>
       <td>0.000000</td>
-      <td>34.550000</td>
-      <td>147.550000</td>
-      <td>34.850000</td>
+      <td>34.650000</td>
+      <td>147.750000</td>
+      <td>35.550000</td>
       <td>35.250000</td>
-      <td>0.868500</td>
+      <td>0.872500</td>
       <td>0.0</td>
-      <td>27.900000</td>
+      <td>27.100000</td>
     </tr>
     <tr>
       <th>25%</th>
-      <td>2.787208e+06</td>
-      <td>486.750000</td>
+      <td>2.903400e+06</td>
+      <td>546.250000</td>
       <td>20.000000</td>
-      <td>59.750000</td>
-      <td>13.250000</td>
-      <td>3.000000</td>
+      <td>65.000000</td>
+      <td>14.000000</td>
+      <td>4.000000</td>
       <td>0.000000</td>
       <td>69.600000</td>
-      <td>295.925000</td>
-      <td>56.875000</td>
-      <td>66.100000</td>
-      <td>1.728000</td>
+      <td>296.000000</td>
+      <td>56.825000</td>
+      <td>65.875000</td>
+      <td>1.729917</td>
       <td>0.0</td>
-      <td>48.700000</td>
+      <td>48.900000</td>
     </tr>
     <tr>
       <th>50%</th>
-      <td>4.316210e+06</td>
-      <td>779.000000</td>
-      <td>27.000000</td>
-      <td>88.500000</td>
-      <td>20.000000</td>
+      <td>4.533484e+06</td>
+      <td>817.500000</td>
+      <td>27.500000</td>
+      <td>91.000000</td>
+      <td>20.500000</td>
       <td>6.000000</td>
       <td>1.000000</td>
-      <td>69.800000</td>
-      <td>302.475000</td>
-      <td>60.400000</td>
-      <td>67.175000</td>
-      <td>1.740750</td>
+      <td>69.833333</td>
+      <td>302.616667</td>
+      <td>60.575000</td>
+      <td>67.025000</td>
+      <td>1.742000</td>
       <td>0.0</td>
-      <td>52.875000</td>
+      <td>52.400000</td>
     </tr>
     <tr>
       <th>75%</th>
-      <td>7.833034e+06</td>
-      <td>1285.750000</td>
-      <td>46.750000</td>
-      <td>153.500000</td>
-      <td>36.500000</td>
+      <td>8.521836e+06</td>
+      <td>1311.000000</td>
+      <td>47.250000</td>
+      <td>154.500000</td>
+      <td>37.250000</td>
       <td>10.000000</td>
       <td>1.000000</td>
-      <td>70.100000</td>
-      <td>306.700000</td>
-      <td>63.183333</td>
-      <td>68.750000</td>
-      <td>1.755500</td>
+      <td>70.137500</td>
+      <td>307.075000</td>
+      <td>63.037500</td>
+      <td>68.850000</td>
+      <td>1.757250</td>
       <td>0.0</td>
-      <td>57.662500</td>
+      <td>56.950000</td>
     </tr>
     <tr>
       <th>max</th>
-      <td>3.018399e+07</td>
+      <td>3.061599e+07</td>
       <td>3680.000000</td>
-      <td>74.000000</td>
-      <td>256.000000</td>
-      <td>63.000000</td>
-      <td>29.000000</td>
+      <td>75.000000</td>
+      <td>260.000000</td>
+      <td>64.000000</td>
+      <td>30.000000</td>
       <td>6.000000</td>
       <td>71.900000</td>
       <td>323.700000</td>
       <td>71.100000</td>
-      <td>72.100000</td>
-      <td>1.807000</td>
+      <td>72.066667</td>
+      <td>1.808000</td>
       <td>0.0</td>
-      <td>76.900000</td>
+      <td>78.300000</td>
     </tr>
   </tbody>
 </table>
@@ -859,53 +684,49 @@ golf_df_agg.describe()
 
 
 ```python
-#someone avereaged a 34.55 score? That's not right, the lowest score ever shot was 59 by Furyk
-#let's find that entry
+#Minimum average score is 34.55, lowest score in PGA was shot by Furyk (58)
+#find that entry
 unreal_golfer = golf_df_agg[golf_df_agg['Score'] == 34.55]
 print(unreal_golfer)
 ```
 
-                 Earnings   Cup  Evnts  Rnds  Cuts  Top10  Wins  Score    DDIS  \
-    displayName                                                                  
-    Tom Kim       5801346  2018     22    38    20      6     2  34.55  147.55   
-    
-                  DACC    GIR   PUTTS  SAND  BIRDS  
-    displayName                                     
-    Tom Kim      34.85  35.25  0.8685   0.0   27.9  
+    Empty DataFrame
+    Columns: [Earnings, Cup, Evnts, Rnds, Cuts, Top10, Wins, Score, DDIS, DACC, GIR, PUTTS, SAND, BIRDS]
+    Index: []
 
 
 
 ```python
-#Tom Kim is good... but he's not that good. Let's go back to ESPN to see what happened
+#Tom Kim is good... but he's not that good
 unreal_golfer_2023 = df_2023[df_2023['displayName'] == 'Tom Kim']
 print(unreal_golfer_2023)
 ```
 
              id               uid                                  guid firstName  \
-    21  4602673  s:1100~a:4602673  cce7aed3-de73-3aef-886c-688ba5f9ea88       Tom   
+    19  4602673  s:1100~a:4602673  cce7aed3-de73-3aef-886c-688ba5f9ea88       Tom   
     
        lastName displayName shortName  debutYear  \
-    21      Kim     Tom Kim    T. Kim        NaN   
+    19      Kim     Tom Kim    T. Kim        NaN   
     
                                                     links  \
-    21  [{'language': 'en-US', 'rel': ['playercard', '...   
+    19  [{'language': 'en-US', 'rel': ['playercard', '...   
     
                                                  headshot  \
-    21  {'href': 'https://a.espncdn.com/i/headshots/go...   
+    19  {'href': 'https://a.espncdn.com/i/headshots/go...   
     
                                                    status  age  \
-    21  {'id': '1', 'name': 'Active', 'type': 'active'...   20   
+    19  {'id': '1', 'name': 'Active', 'type': 'active'...   20   
     
                                                      flag    Earnings  Cup Evnts  \
-    21  {'href': 'https://a.espncdn.com/i/teamlogos/co...  $2,976,766  864    11   
+    19  {'href': 'https://a.espncdn.com/i/teamlogos/co...  $3,237,766  917    12   
     
        Rnds Cuts Top10 Wins Score   DDIS  DACC   GIR  PUTTS SAND BIRDS  
-    21   38   10     3    1  69.1  295.1  69.7  70.5  1.737    0  55.8  
+    19   42   11     3    1  69.3  295.5  71.1  70.5  1.745    0  54.2  
 
 
 
 ```python
-#hm, Tom's averaging 69.1 in 2023. Let's check 2021-2022.
+#ESPN incorrectly entered his stats as 0 in 2021-22
 unreal_golfer_2022 = df_2022[df_2022['displayName'] == 'Tom Kim']
 print(unreal_golfer_2022)
 ```
@@ -934,27 +755,28 @@ print(unreal_golfer_2022)
 
 
 ```python
-#let's fix Tom's data
+#Clean record, locking in 2023 stats. You could argue that this is inconsistent, but Tom Kim won't qualify for the final dataset anyways.
+#The dataset will be filtered for American candidates for the Ryder Cup.
 golf_df_agg.loc['Tom Kim']
 ```
 
 
 
 
-    Earnings    5.801346e+06
-    Cup         2.018000e+03
-    Evnts       2.200000e+01
-    Rnds        3.800000e+01
-    Cuts        2.000000e+01
+    Earnings    6.062346e+06
+    Cup         2.071000e+03
+    Evnts       2.300000e+01
+    Rnds        4.200000e+01
+    Cuts        2.100000e+01
     Top10       6.000000e+00
     Wins        2.000000e+00
-    Score       3.455000e+01
-    DDIS        1.475500e+02
-    DACC        3.485000e+01
+    Score       3.465000e+01
+    DDIS        1.477500e+02
+    DACC        3.555000e+01
     GIR         3.525000e+01
-    PUTTS       8.685000e-01
+    PUTTS       8.725000e-01
     SAND        0.000000e+00
-    BIRDS       2.790000e+01
+    BIRDS       2.710000e+01
     Name: Tom Kim, dtype: float64
 
 
@@ -972,18 +794,18 @@ golf_df_agg.loc['Tom Kim', "BIRDS"] = 55.8
 
 
 ```python
-#let's check Tom's updated stats
+#Check Tom's updated stats
 golf_df_agg.loc['Tom Kim']
 ```
 
 
 
 
-    Earnings    5801346.000
-    Cup            2018.000
-    Evnts            22.000
-    Rnds             38.000
-    Cuts             20.000
+    Earnings    6062346.000
+    Cup            2071.000
+    Evnts            23.000
+    Rnds             42.000
+    Cuts             21.000
     Top10             6.000
     Wins              2.000
     Score            69.100
@@ -999,6 +821,7 @@ golf_df_agg.loc['Tom Kim']
 
 
 ```python
+#check for any outliers
 golf_df_agg.describe()
 ```
 
@@ -1042,139 +865,139 @@ golf_df_agg.describe()
   <tbody>
     <tr>
       <th>count</th>
-      <td>9.400000e+01</td>
-      <td>94.000000</td>
-      <td>94.000000</td>
-      <td>94.000000</td>
-      <td>94.000000</td>
-      <td>94.000000</td>
-      <td>94.000000</td>
-      <td>94.000000</td>
-      <td>94.000000</td>
-      <td>94.000000</td>
-      <td>94.000000</td>
-      <td>94.000000</td>
-      <td>94.0</td>
-      <td>94.000000</td>
+      <td>9.200000e+01</td>
+      <td>92.000000</td>
+      <td>92.000000</td>
+      <td>92.000000</td>
+      <td>92.000000</td>
+      <td>92.000000</td>
+      <td>92.000000</td>
+      <td>92.000000</td>
+      <td>92.000000</td>
+      <td>92.000000</td>
+      <td>92.000000</td>
+      <td>92.000000</td>
+      <td>92.0</td>
+      <td>92.000000</td>
     </tr>
     <tr>
       <th>mean</th>
-      <td>6.487320e+06</td>
-      <td>961.202128</td>
-      <td>32.606383</td>
-      <td>108.244681</td>
-      <td>25.095745</td>
-      <td>7.851064</td>
-      <td>1.106383</td>
-      <td>69.868085</td>
-      <td>301.504433</td>
-      <td>60.465957</td>
-      <td>67.300532</td>
-      <td>1.743020</td>
+      <td>6.776147e+06</td>
+      <td>1015.673913</td>
+      <td>33.836957</td>
+      <td>112.554348</td>
+      <td>26.097826</td>
+      <td>8.152174</td>
+      <td>1.152174</td>
+      <td>69.909783</td>
+      <td>301.910145</td>
+      <td>60.443478</td>
+      <td>67.195290</td>
+      <td>1.743534</td>
       <td>0.0</td>
-      <td>53.454433</td>
+      <td>53.212319</td>
     </tr>
     <tr>
       <th>std</th>
-      <td>5.464426e+06</td>
-      <td>809.484378</td>
-      <td>16.847972</td>
-      <td>57.614717</td>
-      <td>14.139147</td>
-      <td>6.058776</td>
-      <td>1.425332</td>
-      <td>0.509384</td>
-      <td>8.502709</td>
-      <td>4.440033</td>
-      <td>2.213913</td>
-      <td>0.024592</td>
+      <td>5.671968e+06</td>
+      <td>825.992618</td>
+      <td>17.431358</td>
+      <td>59.594853</td>
+      <td>14.576106</td>
+      <td>6.182099</td>
+      <td>1.459601</td>
+      <td>0.495253</td>
+      <td>7.971194</td>
+      <td>4.374593</td>
+      <td>2.206917</td>
+      <td>0.025273</td>
       <td>0.0</td>
-      <td>6.316048</td>
+      <td>6.228607</td>
     </tr>
     <tr>
       <th>min</th>
-      <td>1.596177e+06</td>
+      <td>1.730193e+06</td>
       <td>-18.000000</td>
-      <td>10.000000</td>
-      <td>32.000000</td>
+      <td>11.000000</td>
+      <td>34.000000</td>
       <td>7.000000</td>
       <td>1.000000</td>
       <td>0.000000</td>
-      <td>68.866667</td>
-      <td>275.000000</td>
+      <td>68.933333</td>
+      <td>280.700000</td>
       <td>50.800000</td>
       <td>57.800000</td>
-      <td>1.647000</td>
+      <td>1.646000</td>
       <td>0.0</td>
-      <td>40.900000</td>
+      <td>42.600000</td>
     </tr>
     <tr>
       <th>25%</th>
-      <td>2.787208e+06</td>
-      <td>486.750000</td>
+      <td>2.903400e+06</td>
+      <td>546.250000</td>
       <td>20.000000</td>
-      <td>59.750000</td>
-      <td>13.250000</td>
-      <td>3.000000</td>
+      <td>65.000000</td>
+      <td>14.000000</td>
+      <td>4.000000</td>
       <td>0.000000</td>
       <td>69.600000</td>
-      <td>295.925000</td>
-      <td>57.125000</td>
-      <td>66.100000</td>
-      <td>1.728167</td>
+      <td>296.000000</td>
+      <td>57.050000</td>
+      <td>65.975000</td>
+      <td>1.730250</td>
       <td>0.0</td>
-      <td>49.000000</td>
+      <td>49.075000</td>
     </tr>
     <tr>
       <th>50%</th>
-      <td>4.316210e+06</td>
-      <td>779.000000</td>
-      <td>27.000000</td>
-      <td>88.500000</td>
-      <td>20.000000</td>
+      <td>4.533484e+06</td>
+      <td>817.500000</td>
+      <td>27.500000</td>
+      <td>91.000000</td>
+      <td>20.500000</td>
       <td>6.000000</td>
       <td>1.000000</td>
-      <td>69.800000</td>
-      <td>302.475000</td>
-      <td>60.400000</td>
-      <td>67.200000</td>
-      <td>1.740750</td>
+      <td>69.833333</td>
+      <td>302.616667</td>
+      <td>60.600000</td>
+      <td>67.075000</td>
+      <td>1.742000</td>
       <td>0.0</td>
-      <td>52.975000</td>
+      <td>52.600000</td>
     </tr>
     <tr>
       <th>75%</th>
-      <td>7.833034e+06</td>
-      <td>1285.750000</td>
-      <td>46.750000</td>
-      <td>153.500000</td>
-      <td>36.500000</td>
+      <td>8.521836e+06</td>
+      <td>1311.000000</td>
+      <td>47.250000</td>
+      <td>154.500000</td>
+      <td>37.250000</td>
       <td>10.000000</td>
       <td>1.000000</td>
-      <td>70.100000</td>
-      <td>306.700000</td>
-      <td>63.275000</td>
-      <td>68.975000</td>
-      <td>1.755500</td>
+      <td>70.137500</td>
+      <td>307.075000</td>
+      <td>63.162500</td>
+      <td>69.016667</td>
+      <td>1.757250</td>
       <td>0.0</td>
-      <td>57.662500</td>
+      <td>56.950000</td>
     </tr>
     <tr>
       <th>max</th>
-      <td>3.018399e+07</td>
+      <td>3.061599e+07</td>
       <td>3680.000000</td>
-      <td>74.000000</td>
-      <td>256.000000</td>
-      <td>63.000000</td>
-      <td>29.000000</td>
+      <td>75.000000</td>
+      <td>260.000000</td>
+      <td>64.000000</td>
+      <td>30.000000</td>
       <td>6.000000</td>
       <td>71.900000</td>
       <td>323.700000</td>
       <td>71.100000</td>
-      <td>72.100000</td>
-      <td>1.807000</td>
+      <td>72.066667</td>
+      <td>1.808000</td>
       <td>0.0</td>
-      <td>76.900000</td>
+      <td>78.300000</td>
     </tr>
   </tbody>
 </table>
@@ -1200,9 +1023,7 @@ df_2023_2 = df_2023.set_index('displayName')
 
 
 ```python
-## we still have a bit of cleaning/processing
-#we have to set a boolean for "American"
-#we could do a "nationality" column, but a boolean will get the job done for our business task
+
 ```
 
 
@@ -1288,108 +1109,108 @@ first_cut
       <th>Adam Schenk</th>
       <td>1803965</td>
       <td>584</td>
-      <td>17</td>
-      <td>59</td>
+      <td>18</td>
+      <td>61</td>
       <td>12</td>
       <td>1</td>
       <td>0</td>
-      <td>70.300000</td>
-      <td>304.400000</td>
-      <td>53.700000</td>
-      <td>66.100000</td>
-      <td>1.806000</td>
+      <td>70.400000</td>
+      <td>304.500000</td>
+      <td>53.500000</td>
+      <td>66.000000</td>
+      <td>1.808000</td>
       <td>0.0</td>
-      <td>49.000000</td>
+      <td>50.900000</td>
       <td>True</td>
     </tr>
     <tr>
       <th>Andrew Putnam</th>
-      <td>2259018</td>
-      <td>654</td>
-      <td>16</td>
-      <td>53</td>
-      <td>12</td>
+      <td>2314939</td>
+      <td>679</td>
+      <td>17</td>
+      <td>57</td>
+      <td>13</td>
       <td>3</td>
       <td>0</td>
-      <td>69.400000</td>
-      <td>282.100000</td>
-      <td>64.000000</td>
-      <td>68.600000</td>
-      <td>1.754000</td>
+      <td>69.500000</td>
+      <td>283.100000</td>
+      <td>63.000000</td>
+      <td>68.700000</td>
+      <td>1.755000</td>
       <td>0.0</td>
-      <td>63.400000</td>
+      <td>61.700000</td>
       <td>True</td>
     </tr>
     <tr>
       <th>Brendon Todd</th>
-      <td>1720861</td>
-      <td>516</td>
-      <td>13</td>
-      <td>43</td>
-      <td>8</td>
+      <td>1742013</td>
+      <td>522</td>
+      <td>14</td>
+      <td>47</td>
+      <td>9</td>
       <td>3</td>
       <td>0</td>
-      <td>69.700000</td>
-      <td>280.200000</td>
-      <td>68.200000</td>
-      <td>66.100000</td>
-      <td>1.715000</td>
+      <td>69.900000</td>
+      <td>280.700000</td>
+      <td>66.700000</td>
+      <td>65.500000</td>
+      <td>1.717000</td>
       <td>0.0</td>
-      <td>60.300000</td>
+      <td>59.700000</td>
       <td>True</td>
     </tr>
     <tr>
       <th>Brian Harman</th>
       <td>8816347</td>
       <td>1899</td>
-      <td>68</td>
-      <td>232</td>
+      <td>69</td>
+      <td>234</td>
       <td>54</td>
       <td>13</td>
       <td>0</td>
-      <td>69.700000</td>
-      <td>292.433333</td>
-      <td>67.133333</td>
-      <td>66.966667</td>
-      <td>1.753667</td>
+      <td>69.800000</td>
+      <td>292.466667</td>
+      <td>67.166667</td>
+      <td>66.633333</td>
+      <td>1.755000</td>
       <td>0.0</td>
-      <td>60.833333</td>
+      <td>59.966667</td>
       <td>True</td>
     </tr>
     <tr>
       <th>Chris Kirk</th>
-      <td>2783635</td>
-      <td>916</td>
-      <td>13</td>
-      <td>40</td>
-      <td>9</td>
-      <td>3</td>
+      <td>3177760</td>
+      <td>1024</td>
+      <td>15</td>
+      <td>48</td>
+      <td>11</td>
+      <td>4</td>
       <td>1</td>
-      <td>69.600000</td>
-      <td>295.900000</td>
-      <td>60.900000</td>
-      <td>67.900000</td>
-      <td>1.689000</td>
+      <td>69.800000</td>
+      <td>295.800000</td>
+      <td>61.600000</td>
+      <td>66.600000</td>
+      <td>1.697000</td>
       <td>0.0</td>
-      <td>60.000000</td>
+      <td>63.900000</td>
       <td>True</td>
     </tr>
     <tr>
       <th>Collin Morikawa</th>
-      <td>15533913</td>
-      <td>2965</td>
-      <td>52</td>
-      <td>170</td>
-      <td>42</td>
-      <td>19</td>
+      <td>15965913</td>
+      <td>3040</td>
+      <td>53</td>
+      <td>174</td>
+      <td>43</td>
+      <td>20</td>
       <td>2</td>
-      <td>69.533333</td>
-      <td>296.433333</td>
-      <td>68.333333</td>
-      <td>70.266667</td>
-      <td>1.743333</td>
+      <td>69.600000</td>
+      <td>296.533333</td>
+      <td>68.700000</td>
+      <td>69.966667</td>
+      <td>1.743667</td>
       <td>0.0</td>
-      <td>51.733333</td>
+      <td>52.300000</td>
       <td>True</td>
     </tr>
     <tr>
@@ -1412,326 +1233,308 @@ first_cut
     </tr>
     <tr>
       <th>Harris English</th>
-      <td>8996896</td>
-      <td>516</td>
-      <td>42</td>
-      <td>141</td>
-      <td>32</td>
+      <td>9063496</td>
+      <td>530</td>
+      <td>43</td>
+      <td>145</td>
+      <td>33</td>
       <td>10</td>
       <td>2</td>
-      <td>69.900000</td>
-      <td>297.000000</td>
-      <td>61.750000</td>
-      <td>64.950000</td>
-      <td>1.737000</td>
+      <td>70.000000</td>
+      <td>296.850000</td>
+      <td>62.500000</td>
+      <td>64.750000</td>
+      <td>1.742000</td>
       <td>0.0</td>
-      <td>48.350000</td>
+      <td>49.300000</td>
       <td>True</td>
     </tr>
     <tr>
       <th>Hayden Buckley</th>
-      <td>1629364</td>
-      <td>529</td>
-      <td>13</td>
-      <td>40</td>
-      <td>7</td>
-      <td>2</td>
+      <td>1836289</td>
+      <td>594</td>
+      <td>14</td>
+      <td>44</td>
+      <td>8</td>
+      <td>3</td>
       <td>0</td>
       <td>69.800000</td>
-      <td>303.900000</td>
-      <td>65.300000</td>
-      <td>70.800000</td>
-      <td>1.761000</td>
+      <td>304.500000</td>
+      <td>64.400000</td>
+      <td>69.400000</td>
+      <td>1.755000</td>
       <td>0.0</td>
-      <td>43.300000</td>
+      <td>45.600000</td>
       <td>True</td>
     </tr>
     <tr>
       <th>Jordan Spieth</th>
-      <td>14114548</td>
-      <td>485</td>
-      <td>57</td>
-      <td>194</td>
-      <td>46</td>
-      <td>18</td>
+      <td>14858548</td>
+      <td>612</td>
+      <td>58</td>
+      <td>198</td>
+      <td>47</td>
+      <td>19</td>
       <td>2</td>
       <td>69.866667</td>
-      <td>303.533333</td>
-      <td>54.366667</td>
-      <td>66.333333</td>
-      <td>1.730667</td>
+      <td>303.300000</td>
+      <td>55.133333</td>
+      <td>66.133333</td>
+      <td>1.728667</td>
       <td>0.0</td>
-      <td>56.100000</td>
-      <td>True</td>
-    </tr>
-    <tr>
-      <th>Justin Suh</th>
-      <td>1675331</td>
-      <td>367</td>
-      <td>17</td>
-      <td>54</td>
-      <td>13</td>
-      <td>2</td>
-      <td>0</td>
-      <td>70.200000</td>
-      <td>293.800000</td>
-      <td>63.000000</td>
-      <td>67.200000</td>
-      <td>1.740000</td>
-      <td>0.0</td>
-      <td>44.600000</td>
+      <td>56.366667</td>
       <td>True</td>
     </tr>
     <tr>
       <th>Justin Thomas</th>
       <td>15326162</td>
       <td>345</td>
-      <td>52</td>
-      <td>192</td>
+      <td>53</td>
+      <td>194</td>
       <td>48</td>
       <td>19</td>
       <td>2</td>
-      <td>69.533333</td>
-      <td>307.900000</td>
-      <td>55.500000</td>
-      <td>67.066667</td>
-      <td>1.726000</td>
+      <td>69.600000</td>
+      <td>307.633333</td>
+      <td>55.966667</td>
+      <td>66.933333</td>
+      <td>1.729667</td>
       <td>0.0</td>
-      <td>60.266667</td>
+      <td>60.766667</td>
       <td>True</td>
     </tr>
     <tr>
       <th>Keegan Bradley</th>
-      <td>10624750</td>
-      <td>3263</td>
-      <td>63</td>
-      <td>200</td>
-      <td>44</td>
+      <td>10811950</td>
+      <td>3305</td>
+      <td>64</td>
+      <td>204</td>
+      <td>45</td>
       <td>14</td>
       <td>1</td>
-      <td>70.066667</td>
-      <td>301.966667</td>
-      <td>61.433333</td>
-      <td>68.000000</td>
-      <td>1.753333</td>
+      <td>70.133333</td>
+      <td>301.766667</td>
+      <td>62.100000</td>
+      <td>67.533333</td>
+      <td>1.756667</td>
       <td>0.0</td>
-      <td>44.533333</td>
+      <td>46.166667</td>
       <td>True</td>
     </tr>
     <tr>
       <th>Keith Mitchell</th>
-      <td>5050520</td>
-      <td>1505</td>
-      <td>39</td>
-      <td>130</td>
-      <td>31</td>
+      <td>5093720</td>
+      <td>1513</td>
+      <td>40</td>
+      <td>134</td>
+      <td>32</td>
       <td>9</td>
       <td>0</td>
-      <td>69.450000</td>
-      <td>311.250000</td>
-      <td>63.700000</td>
-      <td>67.450000</td>
-      <td>1.746000</td>
+      <td>69.700000</td>
+      <td>310.850000</td>
+      <td>63.750000</td>
+      <td>67.250000</td>
+      <td>1.750000</td>
       <td>0.0</td>
-      <td>55.500000</td>
+      <td>54.700000</td>
       <td>True</td>
     </tr>
     <tr>
       <th>Kurt Kitayama</th>
       <td>5693388</td>
       <td>1040</td>
-      <td>11</td>
-      <td>32</td>
+      <td>12</td>
+      <td>34</td>
       <td>7</td>
       <td>3</td>
       <td>1</td>
-      <td>70.100000</td>
-      <td>306.700000</td>
-      <td>54.400000</td>
-      <td>67.400000</td>
-      <td>1.755000</td>
+      <td>70.400000</td>
+      <td>306.400000</td>
+      <td>55.000000</td>
+      <td>66.500000</td>
+      <td>1.764000</td>
       <td>0.0</td>
-      <td>61.400000</td>
+      <td>57.100000</td>
       <td>True</td>
     </tr>
     <tr>
       <th>Max Homa</th>
-      <td>16447832</td>
-      <td>3039</td>
-      <td>62</td>
-      <td>204</td>
-      <td>49</td>
+      <td>16514432</td>
+      <td>3053</td>
+      <td>63</td>
+      <td>208</td>
+      <td>50</td>
       <td>16</td>
       <td>5</td>
-      <td>69.766667</td>
-      <td>302.933333</td>
-      <td>60.400000</td>
-      <td>66.200000</td>
-      <td>1.721667</td>
+      <td>69.933333</td>
+      <td>302.733333</td>
+      <td>60.600000</td>
+      <td>65.800000</td>
+      <td>1.724333</td>
       <td>0.0</td>
-      <td>51.733333</td>
+      <td>51.000000</td>
       <td>True</td>
     </tr>
     <tr>
       <th>Patrick Cantlay</th>
-      <td>20839810</td>
-      <td>722</td>
-      <td>52</td>
-      <td>172</td>
-      <td>44</td>
+      <td>21172810</td>
+      <td>784</td>
+      <td>53</td>
+      <td>176</td>
+      <td>45</td>
       <td>23</td>
       <td>6</td>
-      <td>69.000000</td>
-      <td>306.333333</td>
-      <td>61.733333</td>
-      <td>70.433333</td>
-      <td>1.728667</td>
+      <td>69.100000</td>
+      <td>306.366667</td>
+      <td>62.433333</td>
+      <td>70.566667</td>
+      <td>1.737000</td>
       <td>0.0</td>
-      <td>53.000000</td>
+      <td>53.533333</td>
       <td>True</td>
     </tr>
     <tr>
       <th>Rickie Fowler</th>
-      <td>3003047</td>
-      <td>676</td>
+      <td>3209972</td>
+      <td>741</td>
+      <td>12</td>
+      <td>42</td>
       <td>11</td>
-      <td>38</td>
-      <td>10</td>
-      <td>3</td>
+      <td>4</td>
       <td>0</td>
-      <td>69.500000</td>
-      <td>305.000000</td>
-      <td>58.700000</td>
-      <td>69.300000</td>
-      <td>1.709000</td>
+      <td>69.600000</td>
+      <td>305.500000</td>
+      <td>57.700000</td>
+      <td>69.400000</td>
+      <td>1.707000</td>
       <td>0.0</td>
-      <td>43.800000</td>
+      <td>44.000000</td>
       <td>True</td>
     </tr>
     <tr>
       <th>Sahith Theegala</th>
-      <td>6377820</td>
-      <td>782</td>
-      <td>46</td>
-      <td>163</td>
-      <td>39</td>
-      <td>10</td>
+      <td>6899820</td>
+      <td>870</td>
+      <td>47</td>
+      <td>167</td>
+      <td>40</td>
+      <td>11</td>
       <td>0</td>
       <td>69.950000</td>
-      <td>302.350000</td>
-      <td>53.600000</td>
-      <td>67.150000</td>
-      <td>1.732500</td>
+      <td>302.400000</td>
+      <td>54.550000</td>
+      <td>67.050000</td>
+      <td>1.733000</td>
       <td>0.0</td>
-      <td>52.600000</td>
+      <td>51.300000</td>
       <td>True</td>
     </tr>
     <tr>
       <th>Sam Burns</th>
-      <td>17534557</td>
-      <td>940</td>
-      <td>61</td>
-      <td>197</td>
-      <td>44</td>
+      <td>17659657</td>
+      <td>971</td>
+      <td>62</td>
+      <td>201</td>
+      <td>45</td>
       <td>20</td>
       <td>5</td>
-      <td>69.666667</td>
-      <td>307.866667</td>
-      <td>57.200000</td>
-      <td>66.666667</td>
-      <td>1.716667</td>
+      <td>69.766667</td>
+      <td>308.033333</td>
+      <td>58.100000</td>
+      <td>66.866667</td>
+      <td>1.720667</td>
       <td>0.0</td>
-      <td>50.866667</td>
+      <td>50.100000</td>
       <td>True</td>
     </tr>
     <tr>
       <th>Scottie Scheffler</th>
-      <td>30183994</td>
-      <td>1747</td>
-      <td>64</td>
-      <td>218</td>
-      <td>54</td>
-      <td>26</td>
+      <td>30615994</td>
+      <td>1821</td>
+      <td>65</td>
+      <td>222</td>
+      <td>55</td>
+      <td>27</td>
       <td>6</td>
-      <td>68.933333</td>
+      <td>69.033333</td>
       <td>308.433333</td>
-      <td>62.266667</td>
-      <td>71.400000</td>
-      <td>1.718000</td>
+      <td>62.600000</td>
+      <td>71.466667</td>
+      <td>1.724333</td>
       <td>0.0</td>
-      <td>44.500000</td>
+      <td>44.400000</td>
       <td>True</td>
     </tr>
     <tr>
       <th>Taylor Montgomery</th>
-      <td>2299369</td>
-      <td>746</td>
-      <td>15</td>
-      <td>52</td>
-      <td>13</td>
+      <td>2382435</td>
+      <td>783</td>
+      <td>16</td>
+      <td>56</td>
+      <td>14</td>
       <td>4</td>
       <td>0</td>
       <td>69.300000</td>
-      <td>306.000000</td>
-      <td>56.500000</td>
-      <td>63.600000</td>
-      <td>1.647000</td>
+      <td>304.900000</td>
+      <td>55.000000</td>
+      <td>62.800000</td>
+      <td>1.646000</td>
       <td>0.0</td>
-      <td>53.300000</td>
+      <td>52.500000</td>
       <td>True</td>
     </tr>
     <tr>
       <th>Taylor Moore</th>
-      <td>2745877</td>
-      <td>847</td>
-      <td>15</td>
-      <td>51</td>
-      <td>10</td>
+      <td>2825077</td>
+      <td>865</td>
+      <td>16</td>
+      <td>55</td>
+      <td>11</td>
       <td>1</td>
       <td>1</td>
-      <td>70.100000</td>
-      <td>300.800000</td>
-      <td>56.800000</td>
-      <td>66.000000</td>
-      <td>1.789000</td>
+      <td>70.400000</td>
+      <td>301.200000</td>
+      <td>57.400000</td>
+      <td>65.600000</td>
+      <td>1.790000</td>
       <td>0.0</td>
-      <td>49.400000</td>
+      <td>48.200000</td>
       <td>True</td>
     </tr>
     <tr>
       <th>Tom Hoge</th>
       <td>8109202</td>
       <td>741</td>
-      <td>47</td>
-      <td>144</td>
+      <td>48</td>
+      <td>146</td>
       <td>30</td>
       <td>10</td>
       <td>1</td>
-      <td>69.450000</td>
-      <td>296.000000</td>
-      <td>62.750000</td>
-      <td>68.350000</td>
-      <td>1.725500</td>
+      <td>69.550000</td>
+      <td>296.150000</td>
+      <td>63.150000</td>
+      <td>68.250000</td>
+      <td>1.729000</td>
       <td>0.0</td>
-      <td>51.000000</td>
+      <td>52.050000</td>
       <td>True</td>
     </tr>
     <tr>
       <th>Tony Finau</th>
-      <td>15309084</td>
-      <td>916</td>
-      <td>62</td>
-      <td>210</td>
-      <td>51</td>
+      <td>15456084</td>
+      <td>953</td>
+      <td>63</td>
+      <td>214</td>
+      <td>52</td>
       <td>18</td>
       <td>4</td>
-      <td>69.333333</td>
-      <td>305.033333</td>
-      <td>57.833333</td>
-      <td>69.666667</td>
-      <td>1.723667</td>
+      <td>69.433333</td>
+      <td>304.966667</td>
+      <td>58.400000</td>
+      <td>69.533333</td>
+      <td>1.729667</td>
       <td>0.0</td>
-      <td>54.400000</td>
+      <td>55.066667</td>
       <td>True</td>
     </tr>
     <tr>
@@ -1754,20 +1557,20 @@ first_cut
     </tr>
     <tr>
       <th>Xander Schauffele</th>
-      <td>15176924</td>
-      <td>510</td>
-      <td>52</td>
-      <td>177</td>
-      <td>46</td>
-      <td>19</td>
+      <td>15608924</td>
+      <td>585</td>
+      <td>53</td>
+      <td>181</td>
+      <td>47</td>
+      <td>20</td>
       <td>3</td>
-      <td>69.333333</td>
-      <td>305.366667</td>
-      <td>58.433333</td>
-      <td>69.033333</td>
-      <td>1.722667</td>
+      <td>69.400000</td>
+      <td>305.300000</td>
+      <td>59.433333</td>
+      <td>69.200000</td>
+      <td>1.726667</td>
       <td>0.0</td>
-      <td>62.233333</td>
+      <td>61.100000</td>
       <td>True</td>
     </tr>
   </tbody>
@@ -1821,139 +1624,139 @@ first_cut.describe()
   <tbody>
     <tr>
       <th>count</th>
-      <td>2.700000e+01</td>
-      <td>27.000000</td>
-      <td>27.000000</td>
-      <td>27.000000</td>
-      <td>27.000000</td>
-      <td>27.000000</td>
-      <td>27.000000</td>
-      <td>27.000000</td>
-      <td>27.000000</td>
-      <td>27.000000</td>
-      <td>27.000000</td>
-      <td>27.000000</td>
-      <td>27.0</td>
-      <td>27.000000</td>
+      <td>2.600000e+01</td>
+      <td>26.000000</td>
+      <td>26.000000</td>
+      <td>26.000000</td>
+      <td>26.000000</td>
+      <td>26.000000</td>
+      <td>26.000000</td>
+      <td>26.000000</td>
+      <td>26.000000</td>
+      <td>26.000000</td>
+      <td>26.000000</td>
+      <td>26.000000</td>
+      <td>26.0</td>
+      <td>26.000000</td>
     </tr>
     <tr>
       <th>mean</th>
-      <td>8.914718e+06</td>
-      <td>1088.000000</td>
-      <td>37.777778</td>
-      <td>126.518519</td>
-      <td>29.740741</td>
-      <td>10.370370</td>
-      <td>1.555556</td>
-      <td>69.662346</td>
-      <td>301.108642</td>
-      <td>60.140123</td>
-      <td>67.656790</td>
-      <td>1.734031</td>
+      <td>9.369234e+06</td>
+      <td>1153.076923</td>
+      <td>39.538462</td>
+      <td>132.769231</td>
+      <td>31.153846</td>
+      <td>11.000000</td>
+      <td>1.615385</td>
+      <td>69.744872</td>
+      <td>301.410897</td>
+      <td>60.182051</td>
+      <td>67.393590</td>
+      <td>1.736301</td>
       <td>0.0</td>
-      <td>53.122222</td>
+      <td>53.456410</td>
     </tr>
     <tr>
       <th>std</th>
-      <td>7.405417e+06</td>
-      <td>828.340185</td>
-      <td>21.051829</td>
-      <td>70.972568</td>
-      <td>17.463352</td>
-      <td>7.771487</td>
-      <td>1.987138</td>
-      <td>0.339639</td>
-      <td>7.920723</td>
-      <td>4.464373</td>
-      <td>1.853982</td>
-      <td>0.029456</td>
+      <td>7.495006e+06</td>
+      <td>831.900808</td>
+      <td>21.033746</td>
+      <td>70.764006</td>
+      <td>17.469270</td>
+      <td>7.828154</td>
+      <td>2.001538</td>
+      <td>0.353986</td>
+      <td>7.747845</td>
+      <td>4.333838</td>
+      <td>1.977024</td>
+      <td>0.029878</td>
       <td>0.0</td>
-      <td>6.073986</td>
+      <td>5.528432</td>
     </tr>
     <tr>
       <th>min</th>
-      <td>1.629364e+06</td>
+      <td>1.742013e+06</td>
       <td>345.000000</td>
-      <td>11.000000</td>
-      <td>32.000000</td>
+      <td>12.000000</td>
+      <td>34.000000</td>
       <td>7.000000</td>
       <td>1.000000</td>
       <td>0.000000</td>
-      <td>68.933333</td>
-      <td>280.200000</td>
-      <td>53.600000</td>
-      <td>63.600000</td>
-      <td>1.647000</td>
+      <td>69.033333</td>
+      <td>280.700000</td>
+      <td>53.500000</td>
+      <td>62.800000</td>
+      <td>1.646000</td>
       <td>0.0</td>
-      <td>43.300000</td>
+      <td>44.000000</td>
     </tr>
     <tr>
       <th>25%</th>
-      <td>2.522623e+06</td>
-      <td>532.000000</td>
-      <td>15.000000</td>
-      <td>52.500000</td>
-      <td>12.000000</td>
-      <td>3.000000</td>
+      <td>2.913248e+06</td>
+      <td>598.500000</td>
+      <td>16.000000</td>
+      <td>56.000000</td>
+      <td>12.250000</td>
+      <td>4.000000</td>
       <td>0.000000</td>
-      <td>69.450000</td>
-      <td>296.216667</td>
-      <td>56.650000</td>
-      <td>66.266667</td>
-      <td>1.722167</td>
+      <td>69.562500</td>
+      <td>296.612500</td>
+      <td>56.325000</td>
+      <td>66.033333</td>
+      <td>1.724917</td>
       <td>0.0</td>
-      <td>49.200000</td>
+      <td>50.300000</td>
     </tr>
     <tr>
       <th>50%</th>
-      <td>6.377820e+06</td>
-      <td>746.000000</td>
-      <td>45.000000</td>
-      <td>144.000000</td>
-      <td>32.000000</td>
+      <td>7.504511e+06</td>
+      <td>824.500000</td>
+      <td>46.000000</td>
+      <td>150.000000</td>
+      <td>34.000000</td>
       <td>10.000000</td>
       <td>1.000000</td>
-      <td>69.700000</td>
-      <td>303.533333</td>
-      <td>60.900000</td>
-      <td>67.400000</td>
-      <td>1.732500</td>
+      <td>69.733333</td>
+      <td>303.900000</td>
+      <td>61.100000</td>
+      <td>66.991667</td>
+      <td>1.733500</td>
       <td>0.0</td>
-      <td>52.800000</td>
+      <td>52.650000</td>
     </tr>
     <tr>
       <th>75%</th>
-      <td>1.524300e+07</td>
-      <td>1272.500000</td>
-      <td>54.500000</td>
-      <td>193.000000</td>
-      <td>45.000000</td>
-      <td>18.000000</td>
+      <td>1.542360e+07</td>
+      <td>1394.750000</td>
+      <td>56.750000</td>
+      <td>197.000000</td>
+      <td>46.500000</td>
+      <td>18.750000</td>
       <td>2.000000</td>
-      <td>69.883333</td>
-      <td>306.166667</td>
-      <td>62.875000</td>
-      <td>68.816667</td>
-      <td>1.749667</td>
+      <td>69.925000</td>
+      <td>306.150000</td>
+      <td>62.900000</td>
+      <td>69.075000</td>
+      <td>1.753750</td>
       <td>0.0</td>
-      <td>58.050000</td>
+      <td>56.916667</td>
     </tr>
     <tr>
       <th>max</th>
-      <td>3.018399e+07</td>
-      <td>3263.000000</td>
-      <td>68.000000</td>
-      <td>232.000000</td>
-      <td>54.000000</td>
-      <td>26.000000</td>
+      <td>3.061599e+07</td>
+      <td>3305.000000</td>
+      <td>69.000000</td>
+      <td>234.000000</td>
+      <td>55.000000</td>
+      <td>27.000000</td>
       <td>6.000000</td>
-      <td>70.300000</td>
+      <td>70.400000</td>
       <td>313.000000</td>
-      <td>68.333333</td>
-      <td>71.400000</td>
-      <td>1.806000</td>
+      <td>68.700000</td>
+      <td>71.466667</td>
+      <td>1.808000</td>
       <td>0.0</td>
-      <td>63.400000</td>
+      <td>63.900000</td>
     </tr>
   </tbody>
 </table>
@@ -1969,188 +1772,25 @@ first_cut.describe()
 
 
 ```python
-# 6 golfers automatically qualify for points, so if points were taken today Mar21,2023, this is who would auto qual
+# 6 golfers automatically qualify for the American team on points, 
+#if points were taken today, this is who would auto qualify
 first_six = first_cut.nlargest(6,'Cup')
-first_six
+index_list = first_six.index.tolist()
+print(index_list)
+
+
 ```
 
-
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Earnings</th>
-      <th>Cup</th>
-      <th>Evnts</th>
-      <th>Rnds</th>
-      <th>Cuts</th>
-      <th>Top10</th>
-      <th>Wins</th>
-      <th>Score</th>
-      <th>DDIS</th>
-      <th>DACC</th>
-      <th>GIR</th>
-      <th>PUTTS</th>
-      <th>SAND</th>
-      <th>BIRDS</th>
-      <th>is_qualified</th>
-    </tr>
-    <tr>
-      <th>displayName</th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>Keegan Bradley</th>
-      <td>10624750</td>
-      <td>3263</td>
-      <td>63</td>
-      <td>200</td>
-      <td>44</td>
-      <td>14</td>
-      <td>1</td>
-      <td>70.066667</td>
-      <td>301.966667</td>
-      <td>61.433333</td>
-      <td>68.000000</td>
-      <td>1.753333</td>
-      <td>0.0</td>
-      <td>44.533333</td>
-      <td>True</td>
-    </tr>
-    <tr>
-      <th>Max Homa</th>
-      <td>16447832</td>
-      <td>3039</td>
-      <td>62</td>
-      <td>204</td>
-      <td>49</td>
-      <td>16</td>
-      <td>5</td>
-      <td>69.766667</td>
-      <td>302.933333</td>
-      <td>60.400000</td>
-      <td>66.200000</td>
-      <td>1.721667</td>
-      <td>0.0</td>
-      <td>51.733333</td>
-      <td>True</td>
-    </tr>
-    <tr>
-      <th>Collin Morikawa</th>
-      <td>15533913</td>
-      <td>2965</td>
-      <td>52</td>
-      <td>170</td>
-      <td>42</td>
-      <td>19</td>
-      <td>2</td>
-      <td>69.533333</td>
-      <td>296.433333</td>
-      <td>68.333333</td>
-      <td>70.266667</td>
-      <td>1.743333</td>
-      <td>0.0</td>
-      <td>51.733333</td>
-      <td>True</td>
-    </tr>
-    <tr>
-      <th>Brian Harman</th>
-      <td>8816347</td>
-      <td>1899</td>
-      <td>68</td>
-      <td>232</td>
-      <td>54</td>
-      <td>13</td>
-      <td>0</td>
-      <td>69.700000</td>
-      <td>292.433333</td>
-      <td>67.133333</td>
-      <td>66.966667</td>
-      <td>1.753667</td>
-      <td>0.0</td>
-      <td>60.833333</td>
-      <td>True</td>
-    </tr>
-    <tr>
-      <th>Scottie Scheffler</th>
-      <td>30183994</td>
-      <td>1747</td>
-      <td>64</td>
-      <td>218</td>
-      <td>54</td>
-      <td>26</td>
-      <td>6</td>
-      <td>68.933333</td>
-      <td>308.433333</td>
-      <td>62.266667</td>
-      <td>71.400000</td>
-      <td>1.718000</td>
-      <td>0.0</td>
-      <td>44.500000</td>
-      <td>True</td>
-    </tr>
-    <tr>
-      <th>Denny McCarthy</th>
-      <td>4693126</td>
-      <td>1591</td>
-      <td>45</td>
-      <td>154</td>
-      <td>35</td>
-      <td>7</td>
-      <td>0</td>
-      <td>69.700000</td>
-      <td>293.300000</td>
-      <td>61.850000</td>
-      <td>65.900000</td>
-      <td>1.740500</td>
-      <td>0.0</td>
-      <td>55.350000</td>
-      <td>True</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
+    ['Keegan Bradley', 'Max Homa', 'Collin Morikawa', 'Brian Harman', 'Scottie Scheffler', 'Denny McCarthy']
 
 
 
 ```python
-# remove the top 6 from the choices
-USA_team = ['Max Homa','Scottie Scheffler','Keegan Bradley','Kurt Kitayama','Chris Kirk','Tony Finau']
+# remove the top 6 from the choices, they're on the team
+USA_team = []
+USA_team.extend(index_list)
 # select rows where displayName is not in USA_team
-second_cut = first_cut[~first_cut.index.isin(USA_team)]
+second_cut = first_cut.drop(index=USA_team)
 second_cut
 ```
 
@@ -2215,342 +1855,324 @@ second_cut
       <th>Adam Schenk</th>
       <td>1803965</td>
       <td>584</td>
-      <td>17</td>
-      <td>59</td>
+      <td>18</td>
+      <td>61</td>
       <td>12</td>
       <td>1</td>
       <td>0</td>
-      <td>70.300000</td>
-      <td>304.400000</td>
-      <td>53.700000</td>
-      <td>66.100000</td>
-      <td>1.806000</td>
+      <td>70.400000</td>
+      <td>304.500000</td>
+      <td>53.500000</td>
+      <td>66.000000</td>
+      <td>1.808000</td>
       <td>0.0</td>
-      <td>49.000000</td>
+      <td>50.900000</td>
       <td>True</td>
     </tr>
     <tr>
       <th>Andrew Putnam</th>
-      <td>2259018</td>
-      <td>654</td>
-      <td>16</td>
-      <td>53</td>
-      <td>12</td>
+      <td>2314939</td>
+      <td>679</td>
+      <td>17</td>
+      <td>57</td>
+      <td>13</td>
       <td>3</td>
       <td>0</td>
-      <td>69.400000</td>
-      <td>282.100000</td>
-      <td>64.000000</td>
-      <td>68.600000</td>
-      <td>1.754000</td>
+      <td>69.500000</td>
+      <td>283.100000</td>
+      <td>63.000000</td>
+      <td>68.700000</td>
+      <td>1.755000</td>
       <td>0.0</td>
-      <td>63.400000</td>
+      <td>61.700000</td>
       <td>True</td>
     </tr>
     <tr>
       <th>Brendon Todd</th>
-      <td>1720861</td>
-      <td>516</td>
-      <td>13</td>
-      <td>43</td>
-      <td>8</td>
+      <td>1742013</td>
+      <td>522</td>
+      <td>14</td>
+      <td>47</td>
+      <td>9</td>
       <td>3</td>
       <td>0</td>
-      <td>69.700000</td>
-      <td>280.200000</td>
-      <td>68.200000</td>
-      <td>66.100000</td>
-      <td>1.715000</td>
+      <td>69.900000</td>
+      <td>280.700000</td>
+      <td>66.700000</td>
+      <td>65.500000</td>
+      <td>1.717000</td>
       <td>0.0</td>
-      <td>60.300000</td>
+      <td>59.700000</td>
       <td>True</td>
     </tr>
     <tr>
-      <th>Brian Harman</th>
-      <td>8816347</td>
-      <td>1899</td>
-      <td>68</td>
-      <td>232</td>
-      <td>54</td>
-      <td>13</td>
-      <td>0</td>
-      <td>69.700000</td>
-      <td>292.433333</td>
-      <td>67.133333</td>
-      <td>66.966667</td>
-      <td>1.753667</td>
+      <th>Chris Kirk</th>
+      <td>3177760</td>
+      <td>1024</td>
+      <td>15</td>
+      <td>48</td>
+      <td>11</td>
+      <td>4</td>
+      <td>1</td>
+      <td>69.800000</td>
+      <td>295.800000</td>
+      <td>61.600000</td>
+      <td>66.600000</td>
+      <td>1.697000</td>
       <td>0.0</td>
-      <td>60.833333</td>
-      <td>True</td>
-    </tr>
-    <tr>
-      <th>Collin Morikawa</th>
-      <td>15533913</td>
-      <td>2965</td>
-      <td>52</td>
-      <td>170</td>
-      <td>42</td>
-      <td>19</td>
-      <td>2</td>
-      <td>69.533333</td>
-      <td>296.433333</td>
-      <td>68.333333</td>
-      <td>70.266667</td>
-      <td>1.743333</td>
-      <td>0.0</td>
-      <td>51.733333</td>
-      <td>True</td>
-    </tr>
-    <tr>
-      <th>Denny McCarthy</th>
-      <td>4693126</td>
-      <td>1591</td>
-      <td>45</td>
-      <td>154</td>
-      <td>35</td>
-      <td>7</td>
-      <td>0</td>
-      <td>69.700000</td>
-      <td>293.300000</td>
-      <td>61.850000</td>
-      <td>65.900000</td>
-      <td>1.740500</td>
-      <td>0.0</td>
-      <td>55.350000</td>
+      <td>63.900000</td>
       <td>True</td>
     </tr>
     <tr>
       <th>Harris English</th>
-      <td>8996896</td>
-      <td>516</td>
-      <td>42</td>
-      <td>141</td>
-      <td>32</td>
+      <td>9063496</td>
+      <td>530</td>
+      <td>43</td>
+      <td>145</td>
+      <td>33</td>
       <td>10</td>
       <td>2</td>
-      <td>69.900000</td>
-      <td>297.000000</td>
-      <td>61.750000</td>
-      <td>64.950000</td>
-      <td>1.737000</td>
+      <td>70.000000</td>
+      <td>296.850000</td>
+      <td>62.500000</td>
+      <td>64.750000</td>
+      <td>1.742000</td>
       <td>0.0</td>
-      <td>48.350000</td>
+      <td>49.300000</td>
       <td>True</td>
     </tr>
     <tr>
       <th>Hayden Buckley</th>
-      <td>1629364</td>
-      <td>529</td>
-      <td>13</td>
-      <td>40</td>
-      <td>7</td>
-      <td>2</td>
+      <td>1836289</td>
+      <td>594</td>
+      <td>14</td>
+      <td>44</td>
+      <td>8</td>
+      <td>3</td>
       <td>0</td>
       <td>69.800000</td>
-      <td>303.900000</td>
-      <td>65.300000</td>
-      <td>70.800000</td>
-      <td>1.761000</td>
+      <td>304.500000</td>
+      <td>64.400000</td>
+      <td>69.400000</td>
+      <td>1.755000</td>
       <td>0.0</td>
-      <td>43.300000</td>
+      <td>45.600000</td>
       <td>True</td>
     </tr>
     <tr>
       <th>Jordan Spieth</th>
-      <td>14114548</td>
-      <td>485</td>
-      <td>57</td>
-      <td>194</td>
-      <td>46</td>
-      <td>18</td>
+      <td>14858548</td>
+      <td>612</td>
+      <td>58</td>
+      <td>198</td>
+      <td>47</td>
+      <td>19</td>
       <td>2</td>
       <td>69.866667</td>
-      <td>303.533333</td>
-      <td>54.366667</td>
-      <td>66.333333</td>
-      <td>1.730667</td>
+      <td>303.300000</td>
+      <td>55.133333</td>
+      <td>66.133333</td>
+      <td>1.728667</td>
       <td>0.0</td>
-      <td>56.100000</td>
-      <td>True</td>
-    </tr>
-    <tr>
-      <th>Justin Suh</th>
-      <td>1675331</td>
-      <td>367</td>
-      <td>17</td>
-      <td>54</td>
-      <td>13</td>
-      <td>2</td>
-      <td>0</td>
-      <td>70.200000</td>
-      <td>293.800000</td>
-      <td>63.000000</td>
-      <td>67.200000</td>
-      <td>1.740000</td>
-      <td>0.0</td>
-      <td>44.600000</td>
+      <td>56.366667</td>
       <td>True</td>
     </tr>
     <tr>
       <th>Justin Thomas</th>
       <td>15326162</td>
       <td>345</td>
-      <td>52</td>
-      <td>192</td>
+      <td>53</td>
+      <td>194</td>
       <td>48</td>
       <td>19</td>
       <td>2</td>
-      <td>69.533333</td>
-      <td>307.900000</td>
-      <td>55.500000</td>
-      <td>67.066667</td>
-      <td>1.726000</td>
+      <td>69.600000</td>
+      <td>307.633333</td>
+      <td>55.966667</td>
+      <td>66.933333</td>
+      <td>1.729667</td>
       <td>0.0</td>
-      <td>60.266667</td>
+      <td>60.766667</td>
       <td>True</td>
     </tr>
     <tr>
       <th>Keith Mitchell</th>
-      <td>5050520</td>
-      <td>1505</td>
-      <td>39</td>
-      <td>130</td>
-      <td>31</td>
+      <td>5093720</td>
+      <td>1513</td>
+      <td>40</td>
+      <td>134</td>
+      <td>32</td>
       <td>9</td>
       <td>0</td>
-      <td>69.450000</td>
-      <td>311.250000</td>
-      <td>63.700000</td>
-      <td>67.450000</td>
-      <td>1.746000</td>
+      <td>69.700000</td>
+      <td>310.850000</td>
+      <td>63.750000</td>
+      <td>67.250000</td>
+      <td>1.750000</td>
       <td>0.0</td>
-      <td>55.500000</td>
+      <td>54.700000</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>Kurt Kitayama</th>
+      <td>5693388</td>
+      <td>1040</td>
+      <td>12</td>
+      <td>34</td>
+      <td>7</td>
+      <td>3</td>
+      <td>1</td>
+      <td>70.400000</td>
+      <td>306.400000</td>
+      <td>55.000000</td>
+      <td>66.500000</td>
+      <td>1.764000</td>
+      <td>0.0</td>
+      <td>57.100000</td>
       <td>True</td>
     </tr>
     <tr>
       <th>Patrick Cantlay</th>
-      <td>20839810</td>
-      <td>722</td>
-      <td>52</td>
-      <td>172</td>
-      <td>44</td>
+      <td>21172810</td>
+      <td>784</td>
+      <td>53</td>
+      <td>176</td>
+      <td>45</td>
       <td>23</td>
       <td>6</td>
-      <td>69.000000</td>
-      <td>306.333333</td>
-      <td>61.733333</td>
-      <td>70.433333</td>
-      <td>1.728667</td>
+      <td>69.100000</td>
+      <td>306.366667</td>
+      <td>62.433333</td>
+      <td>70.566667</td>
+      <td>1.737000</td>
       <td>0.0</td>
-      <td>53.000000</td>
+      <td>53.533333</td>
       <td>True</td>
     </tr>
     <tr>
       <th>Rickie Fowler</th>
-      <td>3003047</td>
-      <td>676</td>
+      <td>3209972</td>
+      <td>741</td>
+      <td>12</td>
+      <td>42</td>
       <td>11</td>
-      <td>38</td>
-      <td>10</td>
-      <td>3</td>
+      <td>4</td>
       <td>0</td>
-      <td>69.500000</td>
-      <td>305.000000</td>
-      <td>58.700000</td>
-      <td>69.300000</td>
-      <td>1.709000</td>
+      <td>69.600000</td>
+      <td>305.500000</td>
+      <td>57.700000</td>
+      <td>69.400000</td>
+      <td>1.707000</td>
       <td>0.0</td>
-      <td>43.800000</td>
+      <td>44.000000</td>
       <td>True</td>
     </tr>
     <tr>
       <th>Sahith Theegala</th>
-      <td>6377820</td>
-      <td>782</td>
-      <td>46</td>
-      <td>163</td>
-      <td>39</td>
-      <td>10</td>
+      <td>6899820</td>
+      <td>870</td>
+      <td>47</td>
+      <td>167</td>
+      <td>40</td>
+      <td>11</td>
       <td>0</td>
       <td>69.950000</td>
-      <td>302.350000</td>
-      <td>53.600000</td>
-      <td>67.150000</td>
-      <td>1.732500</td>
+      <td>302.400000</td>
+      <td>54.550000</td>
+      <td>67.050000</td>
+      <td>1.733000</td>
       <td>0.0</td>
-      <td>52.600000</td>
+      <td>51.300000</td>
       <td>True</td>
     </tr>
     <tr>
       <th>Sam Burns</th>
-      <td>17534557</td>
-      <td>940</td>
-      <td>61</td>
-      <td>197</td>
-      <td>44</td>
+      <td>17659657</td>
+      <td>971</td>
+      <td>62</td>
+      <td>201</td>
+      <td>45</td>
       <td>20</td>
       <td>5</td>
-      <td>69.666667</td>
-      <td>307.866667</td>
-      <td>57.200000</td>
-      <td>66.666667</td>
-      <td>1.716667</td>
+      <td>69.766667</td>
+      <td>308.033333</td>
+      <td>58.100000</td>
+      <td>66.866667</td>
+      <td>1.720667</td>
       <td>0.0</td>
-      <td>50.866667</td>
+      <td>50.100000</td>
       <td>True</td>
     </tr>
     <tr>
       <th>Taylor Montgomery</th>
-      <td>2299369</td>
-      <td>746</td>
-      <td>15</td>
-      <td>52</td>
-      <td>13</td>
+      <td>2382435</td>
+      <td>783</td>
+      <td>16</td>
+      <td>56</td>
+      <td>14</td>
       <td>4</td>
       <td>0</td>
       <td>69.300000</td>
-      <td>306.000000</td>
-      <td>56.500000</td>
-      <td>63.600000</td>
-      <td>1.647000</td>
+      <td>304.900000</td>
+      <td>55.000000</td>
+      <td>62.800000</td>
+      <td>1.646000</td>
       <td>0.0</td>
-      <td>53.300000</td>
+      <td>52.500000</td>
       <td>True</td>
     </tr>
     <tr>
       <th>Taylor Moore</th>
-      <td>2745877</td>
-      <td>847</td>
-      <td>15</td>
-      <td>51</td>
-      <td>10</td>
+      <td>2825077</td>
+      <td>865</td>
+      <td>16</td>
+      <td>55</td>
+      <td>11</td>
       <td>1</td>
       <td>1</td>
-      <td>70.100000</td>
-      <td>300.800000</td>
-      <td>56.800000</td>
-      <td>66.000000</td>
-      <td>1.789000</td>
+      <td>70.400000</td>
+      <td>301.200000</td>
+      <td>57.400000</td>
+      <td>65.600000</td>
+      <td>1.790000</td>
       <td>0.0</td>
-      <td>49.400000</td>
+      <td>48.200000</td>
       <td>True</td>
     </tr>
     <tr>
       <th>Tom Hoge</th>
       <td>8109202</td>
       <td>741</td>
-      <td>47</td>
-      <td>144</td>
+      <td>48</td>
+      <td>146</td>
       <td>30</td>
       <td>10</td>
       <td>1</td>
-      <td>69.450000</td>
-      <td>296.000000</td>
-      <td>62.750000</td>
-      <td>68.350000</td>
-      <td>1.725500</td>
+      <td>69.550000</td>
+      <td>296.150000</td>
+      <td>63.150000</td>
+      <td>68.250000</td>
+      <td>1.729000</td>
       <td>0.0</td>
-      <td>51.000000</td>
+      <td>52.050000</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>Tony Finau</th>
+      <td>15456084</td>
+      <td>953</td>
+      <td>63</td>
+      <td>214</td>
+      <td>52</td>
+      <td>18</td>
+      <td>4</td>
+      <td>69.433333</td>
+      <td>304.966667</td>
+      <td>58.400000</td>
+      <td>69.533333</td>
+      <td>1.729667</td>
+      <td>0.0</td>
+      <td>55.066667</td>
       <td>True</td>
     </tr>
     <tr>
@@ -2573,20 +2195,20 @@ second_cut
     </tr>
     <tr>
       <th>Xander Schauffele</th>
-      <td>15176924</td>
-      <td>510</td>
-      <td>52</td>
-      <td>177</td>
-      <td>46</td>
-      <td>19</td>
+      <td>15608924</td>
+      <td>585</td>
+      <td>53</td>
+      <td>181</td>
+      <td>47</td>
+      <td>20</td>
       <td>3</td>
-      <td>69.333333</td>
-      <td>305.366667</td>
-      <td>58.433333</td>
-      <td>69.033333</td>
-      <td>1.722667</td>
+      <td>69.400000</td>
+      <td>305.300000</td>
+      <td>59.433333</td>
+      <td>69.200000</td>
+      <td>1.726667</td>
       <td>0.0</td>
-      <td>62.233333</td>
+      <td>61.100000</td>
       <td>True</td>
     </tr>
   </tbody>
@@ -2662,110 +2284,110 @@ top_earners
   <tbody>
     <tr>
       <th>Patrick Cantlay</th>
-      <td>20839810</td>
-      <td>722</td>
-      <td>52</td>
-      <td>172</td>
-      <td>44</td>
+      <td>21172810</td>
+      <td>784</td>
+      <td>53</td>
+      <td>176</td>
+      <td>45</td>
       <td>23</td>
       <td>6</td>
-      <td>69.000000</td>
-      <td>306.333333</td>
-      <td>61.733333</td>
-      <td>70.433333</td>
-      <td>1.728667</td>
+      <td>69.100000</td>
+      <td>306.366667</td>
+      <td>62.433333</td>
+      <td>70.566667</td>
+      <td>1.737000</td>
       <td>0.0</td>
-      <td>53.000000</td>
+      <td>53.533333</td>
       <td>True</td>
     </tr>
     <tr>
       <th>Sam Burns</th>
-      <td>17534557</td>
-      <td>940</td>
-      <td>61</td>
-      <td>197</td>
-      <td>44</td>
+      <td>17659657</td>
+      <td>971</td>
+      <td>62</td>
+      <td>201</td>
+      <td>45</td>
       <td>20</td>
       <td>5</td>
-      <td>69.666667</td>
-      <td>307.866667</td>
-      <td>57.200000</td>
-      <td>66.666667</td>
-      <td>1.716667</td>
+      <td>69.766667</td>
+      <td>308.033333</td>
+      <td>58.100000</td>
+      <td>66.866667</td>
+      <td>1.720667</td>
       <td>0.0</td>
-      <td>50.866667</td>
+      <td>50.100000</td>
       <td>True</td>
     </tr>
     <tr>
-      <th>Collin Morikawa</th>
-      <td>15533913</td>
-      <td>2965</td>
-      <td>52</td>
-      <td>170</td>
-      <td>42</td>
-      <td>19</td>
-      <td>2</td>
-      <td>69.533333</td>
-      <td>296.433333</td>
-      <td>68.333333</td>
-      <td>70.266667</td>
-      <td>1.743333</td>
+      <th>Xander Schauffele</th>
+      <td>15608924</td>
+      <td>585</td>
+      <td>53</td>
+      <td>181</td>
+      <td>47</td>
+      <td>20</td>
+      <td>3</td>
+      <td>69.400000</td>
+      <td>305.300000</td>
+      <td>59.433333</td>
+      <td>69.200000</td>
+      <td>1.726667</td>
       <td>0.0</td>
-      <td>51.733333</td>
+      <td>61.100000</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>Tony Finau</th>
+      <td>15456084</td>
+      <td>953</td>
+      <td>63</td>
+      <td>214</td>
+      <td>52</td>
+      <td>18</td>
+      <td>4</td>
+      <td>69.433333</td>
+      <td>304.966667</td>
+      <td>58.400000</td>
+      <td>69.533333</td>
+      <td>1.729667</td>
+      <td>0.0</td>
+      <td>55.066667</td>
       <td>True</td>
     </tr>
     <tr>
       <th>Justin Thomas</th>
       <td>15326162</td>
       <td>345</td>
-      <td>52</td>
-      <td>192</td>
+      <td>53</td>
+      <td>194</td>
       <td>48</td>
       <td>19</td>
       <td>2</td>
-      <td>69.533333</td>
-      <td>307.900000</td>
-      <td>55.500000</td>
-      <td>67.066667</td>
-      <td>1.726000</td>
+      <td>69.600000</td>
+      <td>307.633333</td>
+      <td>55.966667</td>
+      <td>66.933333</td>
+      <td>1.729667</td>
       <td>0.0</td>
-      <td>60.266667</td>
-      <td>True</td>
-    </tr>
-    <tr>
-      <th>Xander Schauffele</th>
-      <td>15176924</td>
-      <td>510</td>
-      <td>52</td>
-      <td>177</td>
-      <td>46</td>
-      <td>19</td>
-      <td>3</td>
-      <td>69.333333</td>
-      <td>305.366667</td>
-      <td>58.433333</td>
-      <td>69.033333</td>
-      <td>1.722667</td>
-      <td>0.0</td>
-      <td>62.233333</td>
+      <td>60.766667</td>
       <td>True</td>
     </tr>
     <tr>
       <th>Jordan Spieth</th>
-      <td>14114548</td>
-      <td>485</td>
-      <td>57</td>
-      <td>194</td>
-      <td>46</td>
-      <td>18</td>
+      <td>14858548</td>
+      <td>612</td>
+      <td>58</td>
+      <td>198</td>
+      <td>47</td>
+      <td>19</td>
       <td>2</td>
       <td>69.866667</td>
-      <td>303.533333</td>
-      <td>54.366667</td>
-      <td>66.333333</td>
-      <td>1.730667</td>
+      <td>303.300000</td>
+      <td>55.133333</td>
+      <td>66.133333</td>
+      <td>1.728667</td>
       <td>0.0</td>
-      <td>56.100000</td>
+      <td>56.366667</td>
       <td>True</td>
     </tr>
   </tbody>
@@ -2788,32 +2410,6 @@ second_cut['Wins_per_event'] = second_cut['Wins'] / second_cut['Evnts']
 
 second_cut
 ```
-
-    /Users/joeyglenn4/opt/anaconda3/lib/python3.7/site-packages/ipykernel_launcher.py:1: SettingWithCopyWarning: 
-    A value is trying to be set on a copy of a slice from a DataFrame.
-    Try using .loc[row_indexer,col_indexer] = value instead
-    
-    See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-      """Entry point for launching an IPython kernel.
-    /Users/joeyglenn4/opt/anaconda3/lib/python3.7/site-packages/ipykernel_launcher.py:2: SettingWithCopyWarning: 
-    A value is trying to be set on a copy of a slice from a DataFrame.
-    Try using .loc[row_indexer,col_indexer] = value instead
-    
-    See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-      
-    /Users/joeyglenn4/opt/anaconda3/lib/python3.7/site-packages/ipykernel_launcher.py:3: SettingWithCopyWarning: 
-    A value is trying to be set on a copy of a slice from a DataFrame.
-    Try using .loc[row_indexer,col_indexer] = value instead
-    
-    See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-      This is separate from the ipykernel package so we can avoid doing imports until
-    /Users/joeyglenn4/opt/anaconda3/lib/python3.7/site-packages/ipykernel_launcher.py:4: SettingWithCopyWarning: 
-    A value is trying to be set on a copy of a slice from a DataFrame.
-    Try using .loc[row_indexer,col_indexer] = value instead
-    
-    See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-      after removing the cwd from sys.path.
-
 
 
 
@@ -2884,419 +2480,397 @@ second_cut
       <th>Adam Schenk</th>
       <td>1803965</td>
       <td>584</td>
-      <td>17</td>
-      <td>59</td>
+      <td>18</td>
+      <td>61</td>
       <td>12</td>
       <td>1</td>
       <td>0</td>
-      <td>70.300000</td>
-      <td>304.400000</td>
-      <td>53.700000</td>
-      <td>66.100000</td>
-      <td>1.806000</td>
+      <td>70.400000</td>
+      <td>304.500000</td>
+      <td>53.500000</td>
+      <td>66.000000</td>
+      <td>1.808000</td>
       <td>0.0</td>
-      <td>49.000000</td>
+      <td>50.900000</td>
       <td>True</td>
-      <td>106115.588235</td>
-      <td>34.352941</td>
-      <td>0.058824</td>
+      <td>100220.277778</td>
+      <td>32.444444</td>
+      <td>0.055556</td>
       <td>0.000000</td>
     </tr>
     <tr>
       <th>Andrew Putnam</th>
-      <td>2259018</td>
-      <td>654</td>
-      <td>16</td>
-      <td>53</td>
-      <td>12</td>
+      <td>2314939</td>
+      <td>679</td>
+      <td>17</td>
+      <td>57</td>
+      <td>13</td>
       <td>3</td>
       <td>0</td>
-      <td>69.400000</td>
-      <td>282.100000</td>
-      <td>64.000000</td>
-      <td>68.600000</td>
-      <td>1.754000</td>
+      <td>69.500000</td>
+      <td>283.100000</td>
+      <td>63.000000</td>
+      <td>68.700000</td>
+      <td>1.755000</td>
       <td>0.0</td>
-      <td>63.400000</td>
+      <td>61.700000</td>
       <td>True</td>
-      <td>141188.625000</td>
-      <td>40.875000</td>
-      <td>0.187500</td>
+      <td>136172.882353</td>
+      <td>39.941176</td>
+      <td>0.176471</td>
       <td>0.000000</td>
     </tr>
     <tr>
       <th>Brendon Todd</th>
-      <td>1720861</td>
-      <td>516</td>
-      <td>13</td>
-      <td>43</td>
-      <td>8</td>
+      <td>1742013</td>
+      <td>522</td>
+      <td>14</td>
+      <td>47</td>
+      <td>9</td>
       <td>3</td>
       <td>0</td>
-      <td>69.700000</td>
-      <td>280.200000</td>
-      <td>68.200000</td>
-      <td>66.100000</td>
-      <td>1.715000</td>
+      <td>69.900000</td>
+      <td>280.700000</td>
+      <td>66.700000</td>
+      <td>65.500000</td>
+      <td>1.717000</td>
       <td>0.0</td>
-      <td>60.300000</td>
+      <td>59.700000</td>
       <td>True</td>
-      <td>132373.923077</td>
-      <td>39.692308</td>
-      <td>0.230769</td>
+      <td>124429.500000</td>
+      <td>37.285714</td>
+      <td>0.214286</td>
       <td>0.000000</td>
     </tr>
     <tr>
-      <th>Brian Harman</th>
-      <td>8816347</td>
-      <td>1899</td>
-      <td>68</td>
-      <td>232</td>
-      <td>54</td>
-      <td>13</td>
-      <td>0</td>
-      <td>69.700000</td>
-      <td>292.433333</td>
-      <td>67.133333</td>
-      <td>66.966667</td>
-      <td>1.753667</td>
+      <th>Chris Kirk</th>
+      <td>3177760</td>
+      <td>1024</td>
+      <td>15</td>
+      <td>48</td>
+      <td>11</td>
+      <td>4</td>
+      <td>1</td>
+      <td>69.800000</td>
+      <td>295.800000</td>
+      <td>61.600000</td>
+      <td>66.600000</td>
+      <td>1.697000</td>
       <td>0.0</td>
-      <td>60.833333</td>
+      <td>63.900000</td>
       <td>True</td>
-      <td>129652.161765</td>
-      <td>27.926471</td>
-      <td>0.191176</td>
-      <td>0.000000</td>
-    </tr>
-    <tr>
-      <th>Collin Morikawa</th>
-      <td>15533913</td>
-      <td>2965</td>
-      <td>52</td>
-      <td>170</td>
-      <td>42</td>
-      <td>19</td>
-      <td>2</td>
-      <td>69.533333</td>
-      <td>296.433333</td>
-      <td>68.333333</td>
-      <td>70.266667</td>
-      <td>1.743333</td>
-      <td>0.0</td>
-      <td>51.733333</td>
-      <td>True</td>
-      <td>298729.096154</td>
-      <td>57.019231</td>
-      <td>0.365385</td>
-      <td>0.038462</td>
-    </tr>
-    <tr>
-      <th>Denny McCarthy</th>
-      <td>4693126</td>
-      <td>1591</td>
-      <td>45</td>
-      <td>154</td>
-      <td>35</td>
-      <td>7</td>
-      <td>0</td>
-      <td>69.700000</td>
-      <td>293.300000</td>
-      <td>61.850000</td>
-      <td>65.900000</td>
-      <td>1.740500</td>
-      <td>0.0</td>
-      <td>55.350000</td>
-      <td>True</td>
-      <td>104291.688889</td>
-      <td>35.355556</td>
-      <td>0.155556</td>
-      <td>0.000000</td>
+      <td>211850.666667</td>
+      <td>68.266667</td>
+      <td>0.266667</td>
+      <td>0.066667</td>
     </tr>
     <tr>
       <th>Harris English</th>
-      <td>8996896</td>
-      <td>516</td>
-      <td>42</td>
-      <td>141</td>
-      <td>32</td>
+      <td>9063496</td>
+      <td>530</td>
+      <td>43</td>
+      <td>145</td>
+      <td>33</td>
       <td>10</td>
       <td>2</td>
-      <td>69.900000</td>
-      <td>297.000000</td>
-      <td>61.750000</td>
-      <td>64.950000</td>
-      <td>1.737000</td>
+      <td>70.000000</td>
+      <td>296.850000</td>
+      <td>62.500000</td>
+      <td>64.750000</td>
+      <td>1.742000</td>
       <td>0.0</td>
-      <td>48.350000</td>
+      <td>49.300000</td>
       <td>True</td>
-      <td>214211.809524</td>
-      <td>12.285714</td>
-      <td>0.238095</td>
-      <td>0.047619</td>
+      <td>210778.976744</td>
+      <td>12.325581</td>
+      <td>0.232558</td>
+      <td>0.046512</td>
     </tr>
     <tr>
       <th>Hayden Buckley</th>
-      <td>1629364</td>
-      <td>529</td>
-      <td>13</td>
-      <td>40</td>
-      <td>7</td>
-      <td>2</td>
+      <td>1836289</td>
+      <td>594</td>
+      <td>14</td>
+      <td>44</td>
+      <td>8</td>
+      <td>3</td>
       <td>0</td>
       <td>69.800000</td>
-      <td>303.900000</td>
-      <td>65.300000</td>
-      <td>70.800000</td>
-      <td>1.761000</td>
+      <td>304.500000</td>
+      <td>64.400000</td>
+      <td>69.400000</td>
+      <td>1.755000</td>
       <td>0.0</td>
-      <td>43.300000</td>
+      <td>45.600000</td>
       <td>True</td>
-      <td>125335.692308</td>
-      <td>40.692308</td>
-      <td>0.153846</td>
+      <td>131163.500000</td>
+      <td>42.428571</td>
+      <td>0.214286</td>
       <td>0.000000</td>
     </tr>
     <tr>
       <th>Jordan Spieth</th>
-      <td>14114548</td>
-      <td>485</td>
-      <td>57</td>
-      <td>194</td>
-      <td>46</td>
-      <td>18</td>
+      <td>14858548</td>
+      <td>612</td>
+      <td>58</td>
+      <td>198</td>
+      <td>47</td>
+      <td>19</td>
       <td>2</td>
       <td>69.866667</td>
-      <td>303.533333</td>
-      <td>54.366667</td>
-      <td>66.333333</td>
-      <td>1.730667</td>
+      <td>303.300000</td>
+      <td>55.133333</td>
+      <td>66.133333</td>
+      <td>1.728667</td>
       <td>0.0</td>
-      <td>56.100000</td>
+      <td>56.366667</td>
       <td>True</td>
-      <td>247623.649123</td>
-      <td>8.508772</td>
-      <td>0.315789</td>
-      <td>0.035088</td>
-    </tr>
-    <tr>
-      <th>Justin Suh</th>
-      <td>1675331</td>
-      <td>367</td>
-      <td>17</td>
-      <td>54</td>
-      <td>13</td>
-      <td>2</td>
-      <td>0</td>
-      <td>70.200000</td>
-      <td>293.800000</td>
-      <td>63.000000</td>
-      <td>67.200000</td>
-      <td>1.740000</td>
-      <td>0.0</td>
-      <td>44.600000</td>
-      <td>True</td>
-      <td>98548.882353</td>
-      <td>21.588235</td>
-      <td>0.117647</td>
-      <td>0.000000</td>
+      <td>256181.862069</td>
+      <td>10.551724</td>
+      <td>0.327586</td>
+      <td>0.034483</td>
     </tr>
     <tr>
       <th>Justin Thomas</th>
       <td>15326162</td>
       <td>345</td>
-      <td>52</td>
-      <td>192</td>
+      <td>53</td>
+      <td>194</td>
       <td>48</td>
       <td>19</td>
       <td>2</td>
-      <td>69.533333</td>
-      <td>307.900000</td>
-      <td>55.500000</td>
-      <td>67.066667</td>
-      <td>1.726000</td>
+      <td>69.600000</td>
+      <td>307.633333</td>
+      <td>55.966667</td>
+      <td>66.933333</td>
+      <td>1.729667</td>
       <td>0.0</td>
-      <td>60.266667</td>
+      <td>60.766667</td>
       <td>True</td>
-      <td>294733.884615</td>
-      <td>6.634615</td>
-      <td>0.365385</td>
-      <td>0.038462</td>
+      <td>289172.867925</td>
+      <td>6.509434</td>
+      <td>0.358491</td>
+      <td>0.037736</td>
     </tr>
     <tr>
       <th>Keith Mitchell</th>
-      <td>5050520</td>
-      <td>1505</td>
-      <td>39</td>
-      <td>130</td>
-      <td>31</td>
+      <td>5093720</td>
+      <td>1513</td>
+      <td>40</td>
+      <td>134</td>
+      <td>32</td>
       <td>9</td>
       <td>0</td>
-      <td>69.450000</td>
-      <td>311.250000</td>
-      <td>63.700000</td>
-      <td>67.450000</td>
-      <td>1.746000</td>
+      <td>69.700000</td>
+      <td>310.850000</td>
+      <td>63.750000</td>
+      <td>67.250000</td>
+      <td>1.750000</td>
       <td>0.0</td>
-      <td>55.500000</td>
+      <td>54.700000</td>
       <td>True</td>
-      <td>129500.512821</td>
-      <td>38.589744</td>
-      <td>0.230769</td>
+      <td>127343.000000</td>
+      <td>37.825000</td>
+      <td>0.225000</td>
       <td>0.000000</td>
     </tr>
     <tr>
+      <th>Kurt Kitayama</th>
+      <td>5693388</td>
+      <td>1040</td>
+      <td>12</td>
+      <td>34</td>
+      <td>7</td>
+      <td>3</td>
+      <td>1</td>
+      <td>70.400000</td>
+      <td>306.400000</td>
+      <td>55.000000</td>
+      <td>66.500000</td>
+      <td>1.764000</td>
+      <td>0.0</td>
+      <td>57.100000</td>
+      <td>True</td>
+      <td>474449.000000</td>
+      <td>86.666667</td>
+      <td>0.250000</td>
+      <td>0.083333</td>
+    </tr>
+    <tr>
       <th>Patrick Cantlay</th>
-      <td>20839810</td>
-      <td>722</td>
-      <td>52</td>
-      <td>172</td>
-      <td>44</td>
+      <td>21172810</td>
+      <td>784</td>
+      <td>53</td>
+      <td>176</td>
+      <td>45</td>
       <td>23</td>
       <td>6</td>
-      <td>69.000000</td>
-      <td>306.333333</td>
-      <td>61.733333</td>
-      <td>70.433333</td>
-      <td>1.728667</td>
+      <td>69.100000</td>
+      <td>306.366667</td>
+      <td>62.433333</td>
+      <td>70.566667</td>
+      <td>1.737000</td>
       <td>0.0</td>
-      <td>53.000000</td>
+      <td>53.533333</td>
       <td>True</td>
-      <td>400765.576923</td>
-      <td>13.884615</td>
-      <td>0.442308</td>
-      <td>0.115385</td>
+      <td>399486.981132</td>
+      <td>14.792453</td>
+      <td>0.433962</td>
+      <td>0.113208</td>
     </tr>
     <tr>
       <th>Rickie Fowler</th>
-      <td>3003047</td>
-      <td>676</td>
+      <td>3209972</td>
+      <td>741</td>
+      <td>12</td>
+      <td>42</td>
       <td>11</td>
-      <td>38</td>
-      <td>10</td>
-      <td>3</td>
+      <td>4</td>
       <td>0</td>
-      <td>69.500000</td>
-      <td>305.000000</td>
-      <td>58.700000</td>
-      <td>69.300000</td>
-      <td>1.709000</td>
+      <td>69.600000</td>
+      <td>305.500000</td>
+      <td>57.700000</td>
+      <td>69.400000</td>
+      <td>1.707000</td>
       <td>0.0</td>
-      <td>43.800000</td>
+      <td>44.000000</td>
       <td>True</td>
-      <td>273004.272727</td>
-      <td>61.454545</td>
-      <td>0.272727</td>
+      <td>267497.666667</td>
+      <td>61.750000</td>
+      <td>0.333333</td>
       <td>0.000000</td>
     </tr>
     <tr>
       <th>Sahith Theegala</th>
-      <td>6377820</td>
-      <td>782</td>
-      <td>46</td>
-      <td>163</td>
-      <td>39</td>
-      <td>10</td>
+      <td>6899820</td>
+      <td>870</td>
+      <td>47</td>
+      <td>167</td>
+      <td>40</td>
+      <td>11</td>
       <td>0</td>
       <td>69.950000</td>
-      <td>302.350000</td>
-      <td>53.600000</td>
-      <td>67.150000</td>
-      <td>1.732500</td>
+      <td>302.400000</td>
+      <td>54.550000</td>
+      <td>67.050000</td>
+      <td>1.733000</td>
       <td>0.0</td>
-      <td>52.600000</td>
+      <td>51.300000</td>
       <td>True</td>
-      <td>138648.260870</td>
-      <td>17.000000</td>
-      <td>0.217391</td>
+      <td>146804.680851</td>
+      <td>18.510638</td>
+      <td>0.234043</td>
       <td>0.000000</td>
     </tr>
     <tr>
       <th>Sam Burns</th>
-      <td>17534557</td>
-      <td>940</td>
-      <td>61</td>
-      <td>197</td>
-      <td>44</td>
+      <td>17659657</td>
+      <td>971</td>
+      <td>62</td>
+      <td>201</td>
+      <td>45</td>
       <td>20</td>
       <td>5</td>
-      <td>69.666667</td>
-      <td>307.866667</td>
-      <td>57.200000</td>
-      <td>66.666667</td>
-      <td>1.716667</td>
+      <td>69.766667</td>
+      <td>308.033333</td>
+      <td>58.100000</td>
+      <td>66.866667</td>
+      <td>1.720667</td>
       <td>0.0</td>
-      <td>50.866667</td>
+      <td>50.100000</td>
       <td>True</td>
-      <td>287451.754098</td>
-      <td>15.409836</td>
-      <td>0.327869</td>
-      <td>0.081967</td>
+      <td>284833.177419</td>
+      <td>15.661290</td>
+      <td>0.322581</td>
+      <td>0.080645</td>
     </tr>
     <tr>
       <th>Taylor Montgomery</th>
-      <td>2299369</td>
-      <td>746</td>
-      <td>15</td>
-      <td>52</td>
-      <td>13</td>
+      <td>2382435</td>
+      <td>783</td>
+      <td>16</td>
+      <td>56</td>
+      <td>14</td>
       <td>4</td>
       <td>0</td>
       <td>69.300000</td>
-      <td>306.000000</td>
-      <td>56.500000</td>
-      <td>63.600000</td>
-      <td>1.647000</td>
+      <td>304.900000</td>
+      <td>55.000000</td>
+      <td>62.800000</td>
+      <td>1.646000</td>
       <td>0.0</td>
-      <td>53.300000</td>
+      <td>52.500000</td>
       <td>True</td>
-      <td>153291.266667</td>
-      <td>49.733333</td>
-      <td>0.266667</td>
+      <td>148902.187500</td>
+      <td>48.937500</td>
+      <td>0.250000</td>
       <td>0.000000</td>
     </tr>
     <tr>
       <th>Taylor Moore</th>
-      <td>2745877</td>
-      <td>847</td>
-      <td>15</td>
-      <td>51</td>
-      <td>10</td>
+      <td>2825077</td>
+      <td>865</td>
+      <td>16</td>
+      <td>55</td>
+      <td>11</td>
       <td>1</td>
       <td>1</td>
-      <td>70.100000</td>
-      <td>300.800000</td>
-      <td>56.800000</td>
-      <td>66.000000</td>
-      <td>1.789000</td>
+      <td>70.400000</td>
+      <td>301.200000</td>
+      <td>57.400000</td>
+      <td>65.600000</td>
+      <td>1.790000</td>
       <td>0.0</td>
-      <td>49.400000</td>
+      <td>48.200000</td>
       <td>True</td>
-      <td>183058.466667</td>
-      <td>56.466667</td>
-      <td>0.066667</td>
-      <td>0.066667</td>
+      <td>176567.312500</td>
+      <td>54.062500</td>
+      <td>0.062500</td>
+      <td>0.062500</td>
     </tr>
     <tr>
       <th>Tom Hoge</th>
       <td>8109202</td>
       <td>741</td>
-      <td>47</td>
-      <td>144</td>
+      <td>48</td>
+      <td>146</td>
       <td>30</td>
       <td>10</td>
       <td>1</td>
-      <td>69.450000</td>
-      <td>296.000000</td>
-      <td>62.750000</td>
-      <td>68.350000</td>
-      <td>1.725500</td>
+      <td>69.550000</td>
+      <td>296.150000</td>
+      <td>63.150000</td>
+      <td>68.250000</td>
+      <td>1.729000</td>
       <td>0.0</td>
-      <td>51.000000</td>
+      <td>52.050000</td>
       <td>True</td>
-      <td>172536.212766</td>
-      <td>15.765957</td>
-      <td>0.212766</td>
-      <td>0.021277</td>
+      <td>168941.708333</td>
+      <td>15.437500</td>
+      <td>0.208333</td>
+      <td>0.020833</td>
+    </tr>
+    <tr>
+      <th>Tony Finau</th>
+      <td>15456084</td>
+      <td>953</td>
+      <td>63</td>
+      <td>214</td>
+      <td>52</td>
+      <td>18</td>
+      <td>4</td>
+      <td>69.433333</td>
+      <td>304.966667</td>
+      <td>58.400000</td>
+      <td>69.533333</td>
+      <td>1.729667</td>
+      <td>0.0</td>
+      <td>55.066667</td>
+      <td>True</td>
+      <td>245334.666667</td>
+      <td>15.126984</td>
+      <td>0.285714</td>
+      <td>0.063492</td>
     </tr>
     <tr>
       <th>Wyndham Clark</th>
@@ -3322,1075 +2896,25 @@ second_cut
     </tr>
     <tr>
       <th>Xander Schauffele</th>
-      <td>15176924</td>
-      <td>510</td>
-      <td>52</td>
-      <td>177</td>
-      <td>46</td>
-      <td>19</td>
-      <td>3</td>
-      <td>69.333333</td>
-      <td>305.366667</td>
-      <td>58.433333</td>
-      <td>69.033333</td>
-      <td>1.722667</td>
-      <td>0.0</td>
-      <td>62.233333</td>
-      <td>True</td>
-      <td>291863.923077</td>
-      <td>9.807692</td>
-      <td>0.365385</td>
-      <td>0.057692</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
-
-
-```python
-#top points
-top_points = second_cut.nlargest(6, 'Cup')
-top_points
-```
-
-
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Earnings</th>
-      <th>Cup</th>
-      <th>Evnts</th>
-      <th>Rnds</th>
-      <th>Cuts</th>
-      <th>Top10</th>
-      <th>Wins</th>
-      <th>Score</th>
-      <th>DDIS</th>
-      <th>DACC</th>
-      <th>GIR</th>
-      <th>PUTTS</th>
-      <th>SAND</th>
-      <th>BIRDS</th>
-      <th>is_qualified</th>
-      <th>Earnings_per_event</th>
-      <th>Points_per_event</th>
-      <th>Top10_per_event</th>
-      <th>Wins_per_event</th>
-    </tr>
-    <tr>
-      <th>displayName</th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>Collin Morikawa</th>
-      <td>15533913</td>
-      <td>2965</td>
-      <td>52</td>
-      <td>170</td>
-      <td>42</td>
-      <td>19</td>
-      <td>2</td>
-      <td>69.533333</td>
-      <td>296.433333</td>
-      <td>68.333333</td>
-      <td>70.266667</td>
-      <td>1.743333</td>
-      <td>0.0</td>
-      <td>51.733333</td>
-      <td>True</td>
-      <td>298729.096154</td>
-      <td>57.019231</td>
-      <td>0.365385</td>
-      <td>0.038462</td>
-    </tr>
-    <tr>
-      <th>Brian Harman</th>
-      <td>8816347</td>
-      <td>1899</td>
-      <td>68</td>
-      <td>232</td>
-      <td>54</td>
-      <td>13</td>
-      <td>0</td>
-      <td>69.700000</td>
-      <td>292.433333</td>
-      <td>67.133333</td>
-      <td>66.966667</td>
-      <td>1.753667</td>
-      <td>0.0</td>
-      <td>60.833333</td>
-      <td>True</td>
-      <td>129652.161765</td>
-      <td>27.926471</td>
-      <td>0.191176</td>
-      <td>0.000000</td>
-    </tr>
-    <tr>
-      <th>Denny McCarthy</th>
-      <td>4693126</td>
-      <td>1591</td>
-      <td>45</td>
-      <td>154</td>
-      <td>35</td>
-      <td>7</td>
-      <td>0</td>
-      <td>69.700000</td>
-      <td>293.300000</td>
-      <td>61.850000</td>
-      <td>65.900000</td>
-      <td>1.740500</td>
-      <td>0.0</td>
-      <td>55.350000</td>
-      <td>True</td>
-      <td>104291.688889</td>
-      <td>35.355556</td>
-      <td>0.155556</td>
-      <td>0.000000</td>
-    </tr>
-    <tr>
-      <th>Keith Mitchell</th>
-      <td>5050520</td>
-      <td>1505</td>
-      <td>39</td>
-      <td>130</td>
-      <td>31</td>
-      <td>9</td>
-      <td>0</td>
-      <td>69.450000</td>
-      <td>311.250000</td>
-      <td>63.700000</td>
-      <td>67.450000</td>
-      <td>1.746000</td>
-      <td>0.0</td>
-      <td>55.500000</td>
-      <td>True</td>
-      <td>129500.512821</td>
-      <td>38.589744</td>
-      <td>0.230769</td>
-      <td>0.000000</td>
-    </tr>
-    <tr>
-      <th>Sam Burns</th>
-      <td>17534557</td>
-      <td>940</td>
-      <td>61</td>
-      <td>197</td>
-      <td>44</td>
-      <td>20</td>
-      <td>5</td>
-      <td>69.666667</td>
-      <td>307.866667</td>
-      <td>57.200000</td>
-      <td>66.666667</td>
-      <td>1.716667</td>
-      <td>0.0</td>
-      <td>50.866667</td>
-      <td>True</td>
-      <td>287451.754098</td>
-      <td>15.409836</td>
-      <td>0.327869</td>
-      <td>0.081967</td>
-    </tr>
-    <tr>
-      <th>Taylor Moore</th>
-      <td>2745877</td>
-      <td>847</td>
-      <td>15</td>
-      <td>51</td>
-      <td>10</td>
-      <td>1</td>
-      <td>1</td>
-      <td>70.100000</td>
-      <td>300.800000</td>
-      <td>56.800000</td>
-      <td>66.000000</td>
-      <td>1.789000</td>
-      <td>0.0</td>
-      <td>49.400000</td>
-      <td>True</td>
-      <td>183058.466667</td>
-      <td>56.466667</td>
-      <td>0.066667</td>
-      <td>0.066667</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
-
-
-```python
-#top points per event
-top_points_per_event = second_cut.nlargest(6,'Points_per_event')
-top_points_per_event
-```
-
-
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Earnings</th>
-      <th>Cup</th>
-      <th>Evnts</th>
-      <th>Rnds</th>
-      <th>Cuts</th>
-      <th>Top10</th>
-      <th>Wins</th>
-      <th>Score</th>
-      <th>DDIS</th>
-      <th>DACC</th>
-      <th>GIR</th>
-      <th>PUTTS</th>
-      <th>SAND</th>
-      <th>BIRDS</th>
-      <th>is_qualified</th>
-      <th>Earnings_per_event</th>
-      <th>Points_per_event</th>
-      <th>Top10_per_event</th>
-      <th>Wins_per_event</th>
-    </tr>
-    <tr>
-      <th>displayName</th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>Rickie Fowler</th>
-      <td>3003047</td>
-      <td>676</td>
-      <td>11</td>
-      <td>38</td>
-      <td>10</td>
-      <td>3</td>
-      <td>0</td>
-      <td>69.500000</td>
-      <td>305.000000</td>
-      <td>58.700000</td>
-      <td>69.300000</td>
-      <td>1.709000</td>
-      <td>0.0</td>
-      <td>43.800000</td>
-      <td>True</td>
-      <td>273004.272727</td>
-      <td>61.454545</td>
-      <td>0.272727</td>
-      <td>0.000000</td>
-    </tr>
-    <tr>
-      <th>Collin Morikawa</th>
-      <td>15533913</td>
-      <td>2965</td>
-      <td>52</td>
-      <td>170</td>
-      <td>42</td>
-      <td>19</td>
-      <td>2</td>
-      <td>69.533333</td>
-      <td>296.433333</td>
-      <td>68.333333</td>
-      <td>70.266667</td>
-      <td>1.743333</td>
-      <td>0.0</td>
-      <td>51.733333</td>
-      <td>True</td>
-      <td>298729.096154</td>
-      <td>57.019231</td>
-      <td>0.365385</td>
-      <td>0.038462</td>
-    </tr>
-    <tr>
-      <th>Taylor Moore</th>
-      <td>2745877</td>
-      <td>847</td>
-      <td>15</td>
-      <td>51</td>
-      <td>10</td>
-      <td>1</td>
-      <td>1</td>
-      <td>70.100000</td>
-      <td>300.800000</td>
-      <td>56.800000</td>
-      <td>66.000000</td>
-      <td>1.789000</td>
-      <td>0.0</td>
-      <td>49.400000</td>
-      <td>True</td>
-      <td>183058.466667</td>
-      <td>56.466667</td>
-      <td>0.066667</td>
-      <td>0.066667</td>
-    </tr>
-    <tr>
-      <th>Taylor Montgomery</th>
-      <td>2299369</td>
-      <td>746</td>
-      <td>15</td>
-      <td>52</td>
-      <td>13</td>
-      <td>4</td>
-      <td>0</td>
-      <td>69.300000</td>
-      <td>306.000000</td>
-      <td>56.500000</td>
-      <td>63.600000</td>
-      <td>1.647000</td>
-      <td>0.0</td>
-      <td>53.300000</td>
-      <td>True</td>
-      <td>153291.266667</td>
-      <td>49.733333</td>
-      <td>0.266667</td>
-      <td>0.000000</td>
-    </tr>
-    <tr>
-      <th>Andrew Putnam</th>
-      <td>2259018</td>
-      <td>654</td>
-      <td>16</td>
+      <td>15608924</td>
+      <td>585</td>
       <td>53</td>
-      <td>12</td>
+      <td>181</td>
+      <td>47</td>
+      <td>20</td>
       <td>3</td>
-      <td>0</td>
       <td>69.400000</td>
-      <td>282.100000</td>
-      <td>64.000000</td>
-      <td>68.600000</td>
-      <td>1.754000</td>
+      <td>305.300000</td>
+      <td>59.433333</td>
+      <td>69.200000</td>
+      <td>1.726667</td>
       <td>0.0</td>
-      <td>63.400000</td>
+      <td>61.100000</td>
       <td>True</td>
-      <td>141188.625000</td>
-      <td>40.875000</td>
-      <td>0.187500</td>
-      <td>0.000000</td>
-    </tr>
-    <tr>
-      <th>Hayden Buckley</th>
-      <td>1629364</td>
-      <td>529</td>
-      <td>13</td>
-      <td>40</td>
-      <td>7</td>
-      <td>2</td>
-      <td>0</td>
-      <td>69.800000</td>
-      <td>303.900000</td>
-      <td>65.300000</td>
-      <td>70.800000</td>
-      <td>1.761000</td>
-      <td>0.0</td>
-      <td>43.300000</td>
-      <td>True</td>
-      <td>125335.692308</td>
-      <td>40.692308</td>
-      <td>0.153846</td>
-      <td>0.000000</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
-
-
-```python
-#top top10's
-top_top10 = second_cut.nlargest(6, 'Top10')
-top_top10
-```
-
-
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Earnings</th>
-      <th>Cup</th>
-      <th>Evnts</th>
-      <th>Rnds</th>
-      <th>Cuts</th>
-      <th>Top10</th>
-      <th>Wins</th>
-      <th>Score</th>
-      <th>DDIS</th>
-      <th>DACC</th>
-      <th>GIR</th>
-      <th>PUTTS</th>
-      <th>SAND</th>
-      <th>BIRDS</th>
-      <th>is_qualified</th>
-      <th>Earnings_per_event</th>
-      <th>Points_per_event</th>
-      <th>Top10_per_event</th>
-      <th>Wins_per_event</th>
-    </tr>
-    <tr>
-      <th>displayName</th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>Patrick Cantlay</th>
-      <td>20839810</td>
-      <td>722</td>
-      <td>52</td>
-      <td>172</td>
-      <td>44</td>
-      <td>23</td>
-      <td>6</td>
-      <td>69.000000</td>
-      <td>306.333333</td>
-      <td>61.733333</td>
-      <td>70.433333</td>
-      <td>1.728667</td>
-      <td>0.0</td>
-      <td>53.000000</td>
-      <td>True</td>
-      <td>400765.576923</td>
-      <td>13.884615</td>
-      <td>0.442308</td>
-      <td>0.115385</td>
-    </tr>
-    <tr>
-      <th>Sam Burns</th>
-      <td>17534557</td>
-      <td>940</td>
-      <td>61</td>
-      <td>197</td>
-      <td>44</td>
-      <td>20</td>
-      <td>5</td>
-      <td>69.666667</td>
-      <td>307.866667</td>
-      <td>57.200000</td>
-      <td>66.666667</td>
-      <td>1.716667</td>
-      <td>0.0</td>
-      <td>50.866667</td>
-      <td>True</td>
-      <td>287451.754098</td>
-      <td>15.409836</td>
-      <td>0.327869</td>
-      <td>0.081967</td>
-    </tr>
-    <tr>
-      <th>Collin Morikawa</th>
-      <td>15533913</td>
-      <td>2965</td>
-      <td>52</td>
-      <td>170</td>
-      <td>42</td>
-      <td>19</td>
-      <td>2</td>
-      <td>69.533333</td>
-      <td>296.433333</td>
-      <td>68.333333</td>
-      <td>70.266667</td>
-      <td>1.743333</td>
-      <td>0.0</td>
-      <td>51.733333</td>
-      <td>True</td>
-      <td>298729.096154</td>
-      <td>57.019231</td>
-      <td>0.365385</td>
-      <td>0.038462</td>
-    </tr>
-    <tr>
-      <th>Justin Thomas</th>
-      <td>15326162</td>
-      <td>345</td>
-      <td>52</td>
-      <td>192</td>
-      <td>48</td>
-      <td>19</td>
-      <td>2</td>
-      <td>69.533333</td>
-      <td>307.900000</td>
-      <td>55.500000</td>
-      <td>67.066667</td>
-      <td>1.726000</td>
-      <td>0.0</td>
-      <td>60.266667</td>
-      <td>True</td>
-      <td>294733.884615</td>
-      <td>6.634615</td>
-      <td>0.365385</td>
-      <td>0.038462</td>
-    </tr>
-    <tr>
-      <th>Xander Schauffele</th>
-      <td>15176924</td>
-      <td>510</td>
-      <td>52</td>
-      <td>177</td>
-      <td>46</td>
-      <td>19</td>
-      <td>3</td>
-      <td>69.333333</td>
-      <td>305.366667</td>
-      <td>58.433333</td>
-      <td>69.033333</td>
-      <td>1.722667</td>
-      <td>0.0</td>
-      <td>62.233333</td>
-      <td>True</td>
-      <td>291863.923077</td>
-      <td>9.807692</td>
-      <td>0.365385</td>
-      <td>0.057692</td>
-    </tr>
-    <tr>
-      <th>Jordan Spieth</th>
-      <td>14114548</td>
-      <td>485</td>
-      <td>57</td>
-      <td>194</td>
-      <td>46</td>
-      <td>18</td>
-      <td>2</td>
-      <td>69.866667</td>
-      <td>303.533333</td>
-      <td>54.366667</td>
-      <td>66.333333</td>
-      <td>1.730667</td>
-      <td>0.0</td>
-      <td>56.100000</td>
-      <td>True</td>
-      <td>247623.649123</td>
-      <td>8.508772</td>
-      <td>0.315789</td>
-      <td>0.035088</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
-
-
-```python
-#top10 per event
-top_top10_per_event = second_cut.nlargest(6, 'Top10_per_event')
-top_top10_per_event
-```
-
-
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Earnings</th>
-      <th>Cup</th>
-      <th>Evnts</th>
-      <th>Rnds</th>
-      <th>Cuts</th>
-      <th>Top10</th>
-      <th>Wins</th>
-      <th>Score</th>
-      <th>DDIS</th>
-      <th>DACC</th>
-      <th>GIR</th>
-      <th>PUTTS</th>
-      <th>SAND</th>
-      <th>BIRDS</th>
-      <th>is_qualified</th>
-      <th>Earnings_per_event</th>
-      <th>Points_per_event</th>
-      <th>Top10_per_event</th>
-      <th>Wins_per_event</th>
-    </tr>
-    <tr>
-      <th>displayName</th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>Patrick Cantlay</th>
-      <td>20839810</td>
-      <td>722</td>
-      <td>52</td>
-      <td>172</td>
-      <td>44</td>
-      <td>23</td>
-      <td>6</td>
-      <td>69.000000</td>
-      <td>306.333333</td>
-      <td>61.733333</td>
-      <td>70.433333</td>
-      <td>1.728667</td>
-      <td>0.0</td>
-      <td>53.000000</td>
-      <td>True</td>
-      <td>400765.576923</td>
-      <td>13.884615</td>
-      <td>0.442308</td>
-      <td>0.115385</td>
-    </tr>
-    <tr>
-      <th>Collin Morikawa</th>
-      <td>15533913</td>
-      <td>2965</td>
-      <td>52</td>
-      <td>170</td>
-      <td>42</td>
-      <td>19</td>
-      <td>2</td>
-      <td>69.533333</td>
-      <td>296.433333</td>
-      <td>68.333333</td>
-      <td>70.266667</td>
-      <td>1.743333</td>
-      <td>0.0</td>
-      <td>51.733333</td>
-      <td>True</td>
-      <td>298729.096154</td>
-      <td>57.019231</td>
-      <td>0.365385</td>
-      <td>0.038462</td>
-    </tr>
-    <tr>
-      <th>Justin Thomas</th>
-      <td>15326162</td>
-      <td>345</td>
-      <td>52</td>
-      <td>192</td>
-      <td>48</td>
-      <td>19</td>
-      <td>2</td>
-      <td>69.533333</td>
-      <td>307.900000</td>
-      <td>55.500000</td>
-      <td>67.066667</td>
-      <td>1.726000</td>
-      <td>0.0</td>
-      <td>60.266667</td>
-      <td>True</td>
-      <td>294733.884615</td>
-      <td>6.634615</td>
-      <td>0.365385</td>
-      <td>0.038462</td>
-    </tr>
-    <tr>
-      <th>Xander Schauffele</th>
-      <td>15176924</td>
-      <td>510</td>
-      <td>52</td>
-      <td>177</td>
-      <td>46</td>
-      <td>19</td>
-      <td>3</td>
-      <td>69.333333</td>
-      <td>305.366667</td>
-      <td>58.433333</td>
-      <td>69.033333</td>
-      <td>1.722667</td>
-      <td>0.0</td>
-      <td>62.233333</td>
-      <td>True</td>
-      <td>291863.923077</td>
-      <td>9.807692</td>
-      <td>0.365385</td>
-      <td>0.057692</td>
-    </tr>
-    <tr>
-      <th>Sam Burns</th>
-      <td>17534557</td>
-      <td>940</td>
-      <td>61</td>
-      <td>197</td>
-      <td>44</td>
-      <td>20</td>
-      <td>5</td>
-      <td>69.666667</td>
-      <td>307.866667</td>
-      <td>57.200000</td>
-      <td>66.666667</td>
-      <td>1.716667</td>
-      <td>0.0</td>
-      <td>50.866667</td>
-      <td>True</td>
-      <td>287451.754098</td>
-      <td>15.409836</td>
-      <td>0.327869</td>
-      <td>0.081967</td>
-    </tr>
-    <tr>
-      <th>Jordan Spieth</th>
-      <td>14114548</td>
-      <td>485</td>
-      <td>57</td>
-      <td>194</td>
-      <td>46</td>
-      <td>18</td>
-      <td>2</td>
-      <td>69.866667</td>
-      <td>303.533333</td>
-      <td>54.366667</td>
-      <td>66.333333</td>
-      <td>1.730667</td>
-      <td>0.0</td>
-      <td>56.100000</td>
-      <td>True</td>
-      <td>247623.649123</td>
-      <td>8.508772</td>
-      <td>0.315789</td>
-      <td>0.035088</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
-
-
-```python
-#wins per event
-top_wins_per_event = second_cut.nlargest(6, 'Wins_per_event')
-top_wins_per_event
-```
-
-
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Earnings</th>
-      <th>Cup</th>
-      <th>Evnts</th>
-      <th>Rnds</th>
-      <th>Cuts</th>
-      <th>Top10</th>
-      <th>Wins</th>
-      <th>Score</th>
-      <th>DDIS</th>
-      <th>DACC</th>
-      <th>GIR</th>
-      <th>PUTTS</th>
-      <th>SAND</th>
-      <th>BIRDS</th>
-      <th>is_qualified</th>
-      <th>Earnings_per_event</th>
-      <th>Points_per_event</th>
-      <th>Top10_per_event</th>
-      <th>Wins_per_event</th>
-    </tr>
-    <tr>
-      <th>displayName</th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>Patrick Cantlay</th>
-      <td>20839810</td>
-      <td>722</td>
-      <td>52</td>
-      <td>172</td>
-      <td>44</td>
-      <td>23</td>
-      <td>6</td>
-      <td>69.000000</td>
-      <td>306.333333</td>
-      <td>61.733333</td>
-      <td>70.433333</td>
-      <td>1.728667</td>
-      <td>0.0</td>
-      <td>53.000000</td>
-      <td>True</td>
-      <td>400765.576923</td>
-      <td>13.884615</td>
-      <td>0.442308</td>
-      <td>0.115385</td>
-    </tr>
-    <tr>
-      <th>Sam Burns</th>
-      <td>17534557</td>
-      <td>940</td>
-      <td>61</td>
-      <td>197</td>
-      <td>44</td>
-      <td>20</td>
-      <td>5</td>
-      <td>69.666667</td>
-      <td>307.866667</td>
-      <td>57.200000</td>
-      <td>66.666667</td>
-      <td>1.716667</td>
-      <td>0.0</td>
-      <td>50.866667</td>
-      <td>True</td>
-      <td>287451.754098</td>
-      <td>15.409836</td>
-      <td>0.327869</td>
-      <td>0.081967</td>
-    </tr>
-    <tr>
-      <th>Taylor Moore</th>
-      <td>2745877</td>
-      <td>847</td>
-      <td>15</td>
-      <td>51</td>
-      <td>10</td>
-      <td>1</td>
-      <td>1</td>
-      <td>70.100000</td>
-      <td>300.800000</td>
-      <td>56.800000</td>
-      <td>66.000000</td>
-      <td>1.789000</td>
-      <td>0.0</td>
-      <td>49.400000</td>
-      <td>True</td>
-      <td>183058.466667</td>
-      <td>56.466667</td>
-      <td>0.066667</td>
-      <td>0.066667</td>
-    </tr>
-    <tr>
-      <th>Xander Schauffele</th>
-      <td>15176924</td>
-      <td>510</td>
-      <td>52</td>
-      <td>177</td>
-      <td>46</td>
-      <td>19</td>
-      <td>3</td>
-      <td>69.333333</td>
-      <td>305.366667</td>
-      <td>58.433333</td>
-      <td>69.033333</td>
-      <td>1.722667</td>
-      <td>0.0</td>
-      <td>62.233333</td>
-      <td>True</td>
-      <td>291863.923077</td>
-      <td>9.807692</td>
-      <td>0.365385</td>
-      <td>0.057692</td>
-    </tr>
-    <tr>
-      <th>Harris English</th>
-      <td>8996896</td>
-      <td>516</td>
-      <td>42</td>
-      <td>141</td>
-      <td>32</td>
-      <td>10</td>
-      <td>2</td>
-      <td>69.900000</td>
-      <td>297.000000</td>
-      <td>61.750000</td>
-      <td>64.950000</td>
-      <td>1.737000</td>
-      <td>0.0</td>
-      <td>48.350000</td>
-      <td>True</td>
-      <td>214211.809524</td>
-      <td>12.285714</td>
-      <td>0.238095</td>
-      <td>0.047619</td>
-    </tr>
-    <tr>
-      <th>Collin Morikawa</th>
-      <td>15533913</td>
-      <td>2965</td>
-      <td>52</td>
-      <td>170</td>
-      <td>42</td>
-      <td>19</td>
-      <td>2</td>
-      <td>69.533333</td>
-      <td>296.433333</td>
-      <td>68.333333</td>
-      <td>70.266667</td>
-      <td>1.743333</td>
-      <td>0.0</td>
-      <td>51.733333</td>
-      <td>True</td>
-      <td>298729.096154</td>
-      <td>57.019231</td>
-      <td>0.365385</td>
-      <td>0.038462</td>
+      <td>294508.000000</td>
+      <td>11.037736</td>
+      <td>0.377358</td>
+      <td>0.056604</td>
     </tr>
   </tbody>
 </table>
@@ -4407,238 +2931,18 @@ top_wins_per_event
 
 
 ```python
-#One feature I'm noticing isn't here is majors. Let's add that manually
 second_cut.index.name = 'displayName'
 names = second_cut.index
 print(names)
 ```
 
-    Index(['Adam Schenk', 'Andrew Putnam', 'Brendon Todd', 'Brian Harman',
-           'Collin Morikawa', 'Denny McCarthy', 'Harris English', 'Hayden Buckley',
-           'Jordan Spieth', 'Justin Suh', 'Justin Thomas', 'Keith Mitchell',
-           'Patrick Cantlay', 'Rickie Fowler', 'Sahith Theegala', 'Sam Burns',
-           'Taylor Montgomery', 'Taylor Moore', 'Tom Hoge', 'Wyndham Clark',
-           'Xander Schauffele'],
+    Index(['Adam Schenk', 'Andrew Putnam', 'Brendon Todd', 'Chris Kirk',
+           'Harris English', 'Hayden Buckley', 'Jordan Spieth', 'Justin Thomas',
+           'Keith Mitchell', 'Kurt Kitayama', 'Patrick Cantlay', 'Rickie Fowler',
+           'Sahith Theegala', 'Sam Burns', 'Taylor Montgomery', 'Taylor Moore',
+           'Tom Hoge', 'Tony Finau', 'Wyndham Clark', 'Xander Schauffele'],
           dtype='object', name='displayName')
 
-
-
-```python
-majors = {'Adam Schenk': 0, 'Andrew Putnam': 0, 'Brendon Todd': 0, 'Brian Harman': 0,
-          'Collin Morikawa': 2, 'Denny McCarthy': 0, 'Harris English': 0, 'Hayden Buckley': 0,
-          'Jordan Spieth': 3, 'Justin Suh': 0, 'Justin Thomas': 2, 'Keith Mitchell': 0,
-          'Patrick Cantlay': 0, 'Rickie Fowler': 0, 'Sahith Theegala': 0, 'Sam Burns': 0,
-          'Taylor Montgomery': 0, 'Taylor Moore': 0, 'Tom Hoge': 0, 'Wyndham Clark': 0,
-          'Xander Schauffele': 0}
-second_cut['majors'] = second_cut.index.map(majors)
-#sourced off wikipedia
-second_cut.head()
-```
-
-    /Users/joeyglenn4/opt/anaconda3/lib/python3.7/site-packages/ipykernel_launcher.py:7: SettingWithCopyWarning: 
-    A value is trying to be set on a copy of a slice from a DataFrame.
-    Try using .loc[row_indexer,col_indexer] = value instead
-    
-    See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-      import sys
-
-
-
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Earnings</th>
-      <th>Cup</th>
-      <th>Evnts</th>
-      <th>Rnds</th>
-      <th>Cuts</th>
-      <th>Top10</th>
-      <th>Wins</th>
-      <th>Score</th>
-      <th>DDIS</th>
-      <th>DACC</th>
-      <th>GIR</th>
-      <th>PUTTS</th>
-      <th>SAND</th>
-      <th>BIRDS</th>
-      <th>is_qualified</th>
-      <th>Earnings_per_event</th>
-      <th>Points_per_event</th>
-      <th>Top10_per_event</th>
-      <th>Wins_per_event</th>
-      <th>majors</th>
-    </tr>
-    <tr>
-      <th>displayName</th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>Adam Schenk</th>
-      <td>1803965</td>
-      <td>584</td>
-      <td>17</td>
-      <td>59</td>
-      <td>12</td>
-      <td>1</td>
-      <td>0</td>
-      <td>70.300000</td>
-      <td>304.400000</td>
-      <td>53.700000</td>
-      <td>66.100000</td>
-      <td>1.806000</td>
-      <td>0.0</td>
-      <td>49.000000</td>
-      <td>True</td>
-      <td>106115.588235</td>
-      <td>34.352941</td>
-      <td>0.058824</td>
-      <td>0.000000</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>Andrew Putnam</th>
-      <td>2259018</td>
-      <td>654</td>
-      <td>16</td>
-      <td>53</td>
-      <td>12</td>
-      <td>3</td>
-      <td>0</td>
-      <td>69.400000</td>
-      <td>282.100000</td>
-      <td>64.000000</td>
-      <td>68.600000</td>
-      <td>1.754000</td>
-      <td>0.0</td>
-      <td>63.400000</td>
-      <td>True</td>
-      <td>141188.625000</td>
-      <td>40.875000</td>
-      <td>0.187500</td>
-      <td>0.000000</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>Brendon Todd</th>
-      <td>1720861</td>
-      <td>516</td>
-      <td>13</td>
-      <td>43</td>
-      <td>8</td>
-      <td>3</td>
-      <td>0</td>
-      <td>69.700000</td>
-      <td>280.200000</td>
-      <td>68.200000</td>
-      <td>66.100000</td>
-      <td>1.715000</td>
-      <td>0.0</td>
-      <td>60.300000</td>
-      <td>True</td>
-      <td>132373.923077</td>
-      <td>39.692308</td>
-      <td>0.230769</td>
-      <td>0.000000</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>Brian Harman</th>
-      <td>8816347</td>
-      <td>1899</td>
-      <td>68</td>
-      <td>232</td>
-      <td>54</td>
-      <td>13</td>
-      <td>0</td>
-      <td>69.700000</td>
-      <td>292.433333</td>
-      <td>67.133333</td>
-      <td>66.966667</td>
-      <td>1.753667</td>
-      <td>0.0</td>
-      <td>60.833333</td>
-      <td>True</td>
-      <td>129652.161765</td>
-      <td>27.926471</td>
-      <td>0.191176</td>
-      <td>0.000000</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>Collin Morikawa</th>
-      <td>15533913</td>
-      <td>2965</td>
-      <td>52</td>
-      <td>170</td>
-      <td>42</td>
-      <td>19</td>
-      <td>2</td>
-      <td>69.533333</td>
-      <td>296.433333</td>
-      <td>68.333333</td>
-      <td>70.266667</td>
-      <td>1.743333</td>
-      <td>0.0</td>
-      <td>51.733333</td>
-      <td>True</td>
-      <td>298729.096154</td>
-      <td>57.019231</td>
-      <td>0.365385</td>
-      <td>0.038462</td>
-      <td>2</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
-
-
-```python
-
-# Let's tackle the analysis with visuals in two ways
-# 1. Which golfers compete/win the most?
-# 2. Which golfers have the best statistics?
-
-```
 
 
 ```python
