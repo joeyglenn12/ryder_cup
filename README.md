@@ -21,6 +21,8 @@ The other six golfers are picked by the Ryder Cup captain.
 
 As of April 12, 2023:
 
+Auto Qualify:
+
 | Name | Points | 
 | --------------- | --------------- |
 | Scottie Scheffler | 1844 | 
@@ -31,4 +33,20 @@ As of April 12, 2023:
 | Sam Burns | 984 | 
 
 
-.....
+Top 10 Selections:
+
+| Rank | Name | Wins | Average Score | Putts per Hole | GIR | DDIS |
+| --------------- | --------------- | --------------- | --------------- | --------------- | --------------- | --------------- | 
+|1| Patrick Cantlay | 6 | 69.10 | 1.7370 | 70.57% | 306.37 | 
+|2| Xander Schauffele| 3 | 69.40 | 1.7267 | 69.20% | 305.30 |
+|3| Taylor Montgomery | 0 | 69.30 | 1.6460 | 62.80% | 304.90 | 
+|6| Tony Finau | 4 | 69.43 | 1.7297 | 69.53% | 304.97 |
+|5| Collin Morikawa | 2 | 69.60 | 1.7437 | 69.97% | 296.53 | 
+|6| Jordan Spieth| 2 | 69.87 | 1.7287 | 66.13% | 303.30 | 
+|7| Andrew Putnam | 0 | 69.50 | 1.7550 | 68.70% | 283.10 | 
+|8| Justin Thomas | 0 | 69.60 | 1.7297 | 66.93% | 307.63 | 
+|9| Rickie Fowler | 0 | 69.87 | 1.707 | 69.40% | 305.50 | 
+|10| Tom Hoge | 1 | 69.43 | 1.7290 | 68.25% | 296.15 | 
+
+#Conclusion
+Based on the analysis, the recommendation is that US Ryder Cup Captain, Zach Johnson, selects the top six ranked players in this list. These players have a combination of the highest performance metrics and wins in the overall pool. However, there are numerous factors that can affect final selection, including movement of the players that automatically qualified, overall team chemistry, experience, and character. 
