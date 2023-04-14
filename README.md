@@ -48,6 +48,8 @@ Top 10 Selections:
 |9| Rickie Fowler | 0 | 69.87 | 1.707 | 69.40% | 305.50 | 
 |10| Tom Hoge | 1 | 69.43 | 1.7290 | 68.25% | 296.15 | 
 
+# Data Visualization
+
 Other metrics were used, please see [dashboard](https://public.tableau.com/app/profile/joseph.glenn/viz/RyderCupCandidates-CareerStats2020-Present/RyderCup-CaseStudy).
 
 # Conclusion
