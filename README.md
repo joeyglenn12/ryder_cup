@@ -5,7 +5,7 @@ This project aims to determine the best candidates to be selected for the US Ryd
 ## Data Source
 
 This data was scraped from ESPN's website using Python. Specifically, data was collected on the top PGA tour players' performance in golf tournaments from the beginning of the 2020 season, in September, to April 2023.
-This data includes fields such as Earnings, Fedex Points, and individual statistics.
+This data includes fields such as total Earnings, Fedex Cup Points, and individual statistics.
 
 ## Methodology
 
