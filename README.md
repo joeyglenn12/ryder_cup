@@ -50,7 +50,7 @@ Top 10 Selections:
 
 ## Data Visualization
 
-Other metrics were used, please see [dashboard](https://public.tableau.com/app/profile/joseph.glenn/viz/RyderCupCandidates-CareerStats2020-Present/RyderCup-CaseStudy).
+Other metrics were used, please see [dashboard](https://public.tableau.com/app/profile/joseph.glenn/viz/RyderCupCandidates-CareerStats2020-Present_16816755026570/RyderCup-CaseStudy).
 
 ## Conclusion
 Based on the analysis, the recommendation is that US Ryder Cup Captain, Zach Johnson, selects the top six ranked players in this list. These players have a combination of the highest performance metrics and wins in the overall pool. However, there are numerous factors that can affect final selection, including movement of the players that automatically qualified, overall team chemistry, experience, and character. 
